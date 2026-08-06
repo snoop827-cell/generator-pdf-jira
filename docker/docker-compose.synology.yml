@@ -25,7 +25,7 @@ services:
     depends_on:
       - jira-card-generator-backend
     ports:
-      - "8080:80"
+      - "8091:80"
 
 volumes:
   jira-card-generator-tmp:

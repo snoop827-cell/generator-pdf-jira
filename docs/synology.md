@@ -43,7 +43,14 @@ Reponse attendue :
 Interface web :
 
 ```text
-http://IP_DU_NAS:8080/jira-cards/
+http://IP_DU_NAS:8091/jira-cards/
+```
+
+Via le gateway central :
+
+```text
+http://IP_DU_NAS:8099/jira-cards/
+https://apps.snoop827-3d-factory.com/jira-cards/
 ```
 
 ## Points a preciser lors des prochaines etapes
