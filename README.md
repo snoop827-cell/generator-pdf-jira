@@ -13,6 +13,7 @@ Le projet est construit progressivement. Cette premiere etape met en place le mo
 - Paginer les cartes selon les regles d'impression A4.
 - Generer un PDF A4 par Feature.
 - Generer une archive ZIP contenant les PDF.
+- Exposer une API FastAPI autour du moteur.
 - Produire des modeles metier reutilisables par une API, une CLI ou un script.
 - Calculer une couleur stable et deterministe par Feature.
 
@@ -21,6 +22,7 @@ Le projet est construit progressivement. Cette premiere etape met en place le mo
 ```text
 jira-card-generator/
   backend/
+    api/         Endpoints FastAPI et adaptation HTTP
     colors/      Couleurs stables par Feature
     core/        Modeles et exceptions metier
     csv/         Lecture, nettoyage et mapping CSV Jira
@@ -52,6 +54,21 @@ python -m pip install -e ".[dev,pdf]"
 ```powershell
 python -m pytest
 ```
+
+## API locale
+
+Demarrer le backend :
+
+```powershell
+python -m uvicorn backend.api.main:app --reload
+```
+
+Endpoints disponibles :
+
+- `GET /health`
+- `POST /api/csv/analyze`
+- `POST /api/generate/summary`
+- `POST /api/generate`
 
 ## Contraintes de conception
 
@@ -117,6 +134,5 @@ La documentation de deploiement Synology sera detaillee dans `docs/synology.md`.
 ## Prochaines etapes
 
 1. Affiner le rendu PDF avec les modeles `Feature.pdf` et `UserStory.pdf`.
-2. Ajouter l'API FastAPI autour du moteur metier.
-3. Integrer le frontend dans la stack du portail existant.
-4. Completer Docker et la documentation de deploiement Synology.
+2. Integrer le frontend dans la stack du portail existant.
+3. Completer Docker et la documentation de deploiement Synology.

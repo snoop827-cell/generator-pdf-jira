@@ -5,12 +5,16 @@ description = "Deterministic Jira CSV to printable card PDF generator."
 readme = "README.md"
 requires-python = ">=3.13,<3.15"
 dependencies = [
+    "fastapi>=0.115",
     "pandas>=2.2",
     "pydantic>=2.8",
+    "python-multipart>=0.0.12",
+    "uvicorn[standard]>=0.32",
 ]
 
 [project.optional-dependencies]
 dev = [
+    "httpx>=0.27",
     "pytest>=8.3",
 ]
 pdf = [
@@ -22,4 +26,3 @@ pdf = [
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["backend/tests"]
-

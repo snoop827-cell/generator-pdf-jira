@@ -2,6 +2,7 @@
 
 ## Separation des responsabilites
 
+- `backend/api` expose le moteur via HTTP avec FastAPI.
 - `backend/core` contient uniquement les modeles et erreurs du domaine.
 - `backend/csv` transforme un export Jira en objets metier valides.
 - `backend/services` orchestre les cas d'utilisation purs, comme le regroupement par Feature.
@@ -47,3 +48,16 @@ Regles implementees :
 - controle de l'existence de chaque PDF ;
 - tri des PDF par nom de fichier avant ajout a l'archive ;
 - conservation des noms de fichiers sans chemin local dans l'archive.
+
+## API
+
+La couche API reste volontairement fine.
+
+Endpoints :
+
+- `GET /health` pour les controles d'exploitation ;
+- `POST /api/csv/analyze` pour analyser un CSV sans generer les PDF ;
+- `POST /api/generate/summary` pour tester la generation et obtenir les compteurs ;
+- `POST /api/generate` pour produire l'archive ZIP.
+
+La couche API ne contient pas de regles metier de parsing, regroupement, pagination ou rendu PDF.
