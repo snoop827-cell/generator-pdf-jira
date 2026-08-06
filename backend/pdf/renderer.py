@@ -146,53 +146,93 @@ def _draw_card(canvas: Canvas, card: PrintableCard, x: float, y: float, options:
 
 
 def _draw_feature_template(canvas: Canvas, card: PrintableCard, x: float, y: float, padding: float) -> None:
-    icon_x = x + _scale_x(13)
-    header_y = y + CARD_HEIGHT - _scale_y(42)
-    _draw_lightning_icon(canvas, icon_x, header_y - _scale_y(14), _scale_x(38), _scale_y(50))
+    content_left = x + padding
+    content_right = x + CARD_WIDTH - padding
+    content_top = y + CARD_HEIGHT - padding
+    content_bottom = y + padding
+    content_width = content_right - content_left
+
+    icon_size = _scale_x(22)
+    header_y = content_top - _scale_y(12)
+    _draw_lightning_icon(canvas, content_left, header_y - _scale_y(10), icon_size, _scale_y(28))
 
     canvas.setFillColor(colors.black)
-    canvas.setFont(FONT_REGULAR, 18)
-    canvas.drawString(x + _scale_x(58), header_y, "FEATURE")
+    canvas.setFont(FONT_BOLD, 12)
+    canvas.drawString(content_left + _scale_x(30), header_y, "FEATURE")
 
-    text_x = x + max(padding, _scale_x(15))
-    text_width = CARD_WIDTH - (2 * max(padding, _scale_x(15)))
-    key_top = y + CARD_HEIGHT - _scale_y(92)
-    summary_top = y + CARD_HEIGHT - _scale_y(142)
+    separator_y = header_y - _scale_y(20)
+    canvas.setStrokeColor(colors.HexColor("#E5E7EB"))
+    canvas.setLineWidth(0.6)
+    canvas.line(content_left, separator_y, content_right, separator_y)
 
-    _draw_fitted_text(canvas, card.key, text_x, key_top, text_width, _scale_y(42), FONT_BOLD, 18, 11, 1)
-    _draw_fitted_text(canvas, card.title, text_x, summary_top, text_width, _scale_y(230), FONT_BOLD, 17, 9, 5)
+    key_top = separator_y - _scale_y(22)
+    summary_top = key_top - _scale_y(42)
+    _draw_fitted_text(canvas, card.key, content_left, key_top, content_width, _scale_y(30), FONT_BOLD, 14, 9, 1)
+    _draw_fitted_text(
+        canvas,
+        card.title,
+        content_left,
+        summary_top,
+        content_width,
+        summary_top - content_bottom,
+        FONT_BOLD,
+        15,
+        9,
+        5,
+    )
 
 
 def _draw_user_story_template(canvas: Canvas, card: PrintableCard, x: float, y: float, padding: float) -> None:
-    text_x = x + max(padding, _scale_x(13))
-    text_width = CARD_WIDTH - (2 * max(padding, _scale_x(13)))
-    header_top = y + CARD_HEIGHT - _scale_y(28)
-    summary_top = y + CARD_HEIGHT - _scale_y(72)
+    content_left = x + padding
+    content_right = x + CARD_WIDTH - padding
+    content_top = y + CARD_HEIGHT - padding
+    content_bottom = y + padding
+    content_width = content_right - content_left
+
+    header_top = content_top - _scale_y(5)
+    summary_top = header_top - _scale_y(30)
+    footer_y = content_bottom + _scale_y(20)
+    points_baseline = content_bottom + _scale_y(56)
+    footer_reserved_width = content_width - _scale_x(54)
 
     canvas.setFillColor(colors.black)
     header = f"{card.issue_type or 'User Story'} {card.key}"
-    _draw_fitted_text(canvas, header, text_x, header_top, text_width, _scale_y(33), FONT_BOLD, 15, 8, 1)
-    _draw_fitted_text(canvas, card.title, text_x, summary_top, text_width, _scale_y(145), FONT_BOLD, 15, 8, 4)
+    _draw_fitted_text(canvas, header, content_left, header_top, content_width, _scale_y(22), FONT_BOLD, 11, 7, 1)
+
+    canvas.setStrokeColor(colors.HexColor("#E5E7EB"))
+    canvas.setLineWidth(0.6)
+    canvas.line(content_left, header_top - _scale_y(19), content_right, header_top - _scale_y(19))
+
+    _draw_fitted_text(
+        canvas,
+        card.title,
+        content_left,
+        summary_top,
+        content_width,
+        summary_top - (points_baseline + _scale_y(8)),
+        FONT_BOLD,
+        14,
+        8,
+        4,
+    )
 
     if card.story_points is not None:
-        canvas.setFont(FONT_BOLD, 31)
+        canvas.setFont(FONT_BOLD, 27)
         story_points = _format_story_points(card.story_points)
-        canvas.drawRightString(x + CARD_WIDTH - max(padding, _scale_x(22)), y + _scale_y(89), story_points)
+        canvas.drawRightString(content_right, points_baseline, story_points)
 
-    footer_y = y + _scale_y(38)
-    _draw_lightning_icon(canvas, x + _scale_x(17), footer_y - _scale_y(15), _scale_x(20), _scale_y(26))
+    _draw_lightning_icon(canvas, content_left, footer_y - _scale_y(9), _scale_x(15), _scale_y(20))
     canvas.setFillColor(colors.black)
-    footer_x = x + _scale_x(45)
-    footer_width = CARD_WIDTH - footer_x + x - max(padding, _scale_x(10))
+    footer_x = content_left + _scale_x(22)
     _draw_fitted_text(
         canvas,
         f"FEATURE {card.feature_key}",
         footer_x,
         footer_y,
-        footer_width,
-        _scale_y(24),
+        footer_reserved_width,
+        _scale_y(18),
         FONT_REGULAR,
-        15,
+        10,
         7,
         1,
     )
