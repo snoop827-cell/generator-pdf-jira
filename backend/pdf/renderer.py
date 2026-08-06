@@ -193,16 +193,14 @@ def _draw_user_story_template(canvas: Canvas, card: PrintableCard, x: float, y: 
 
     title_font_size = 15
     summary_font_size = 12
-    feature_font_size = 15
+    feature_font_size = 12
     story_points_font_size = 40
 
     header_top = content_top - _scale_y(3)
     summary_top = header_top - title_font_size - (5 * 2.8346456693)
     feature_baseline = content_bottom + feature_font_size * 0.15
     points_baseline = feature_baseline + feature_font_size + _scale_y(24)
-    icon_width = feature_font_size * 0.78
-    icon_height = feature_font_size * 1.05
-    feature_text_x = content_left + icon_width + _scale_x(8)
+    feature_text_x = content_left
     feature_text_width = content_right - feature_text_x
 
     canvas.setFillColor(colors.black)
@@ -227,7 +225,6 @@ def _draw_user_story_template(canvas: Canvas, card: PrintableCard, x: float, y: 
         story_points = _format_story_points(card.story_points)
         canvas.drawRightString(content_right, points_baseline, story_points)
 
-    _draw_lightning_icon(canvas, content_left, feature_baseline - feature_font_size * 0.2, icon_width, icon_height)
     canvas.setFillColor(colors.black)
     _draw_fitted_text(
         canvas,
