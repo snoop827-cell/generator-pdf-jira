@@ -54,6 +54,36 @@ def test_render_feature_pdf_contains_expected_text(tmp_path: Path) -> None:
     assert "PROJ-1" in text
 
 
+def test_render_feature_pdf_accepts_long_realistic_text(tmp_path: Path) -> None:
+    feature = Feature(
+        key="TSYCPROGRM-233",
+        summary="Portail YC - Comment fournir une vue synthétique des filtres",
+        stories=(
+            UserStory(
+                issue_type="Story",
+                key="YFPYC-419",
+                summary="Déplacer les filtres dans une sidebar",
+                story_points=3,
+                feature_key="TSYCPROGRM-233",
+                feature_summary="Portail YC - Comment fournir une vue synthétique des filtres",
+            ),
+            UserStory(
+                issue_type="Story",
+                key="YFPYC-400",
+                summary="Ecran Activités - Afficher les activités Azure",
+                story_points=5,
+                feature_key="TSYCPROGRM-233",
+                feature_summary="Portail YC - Comment fournir une vue synthétique des filtres",
+            ),
+        ),
+    )
+
+    output_path = render_feature_pdf(paginate_feature(feature), tmp_path / "long-text.pdf")
+
+    assert output_path.exists()
+    assert len(PdfReader(output_path).pages) == 1
+
+
 def test_render_feature_pdfs_returns_paths_and_summary(tmp_path: Path) -> None:
     print_jobs = paginate_features([make_feature(1, "FEAT-1"), make_feature(2, "FEAT-2")])
     pdf_paths, summary = render_feature_pdfs(print_jobs, tmp_path)

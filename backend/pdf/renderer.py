@@ -151,47 +151,51 @@ def _draw_feature_template(canvas: Canvas, card: PrintableCard, x: float, y: flo
     _draw_lightning_icon(canvas, icon_x, header_y - _scale_y(14), _scale_x(38), _scale_y(50))
 
     canvas.setFillColor(colors.black)
-    canvas.setFont(FONT_REGULAR, 26)
+    canvas.setFont(FONT_REGULAR, 18)
     canvas.drawString(x + _scale_x(58), header_y, "FEATURE")
 
     text_x = x + max(padding, _scale_x(15))
     text_width = CARD_WIDTH - (2 * max(padding, _scale_x(15)))
-    key_y = y + CARD_HEIGHT - _scale_y(124)
-    summary_y = y + CARD_HEIGHT - _scale_y(171)
+    key_top = y + CARD_HEIGHT - _scale_y(92)
+    summary_top = y + CARD_HEIGHT - _scale_y(142)
 
-    canvas.setFont(FONT_BOLD, 26)
-    for line_index, line in enumerate(_wrap_text(card.key, text_width, FONT_BOLD, 26, 1)):
-        canvas.drawString(text_x, key_y - (line_index * 30), line)
-    for line_index, line in enumerate(_wrap_text(card.title, text_width, FONT_BOLD, 25, 3)):
-        canvas.drawString(text_x, summary_y - (line_index * 29), line)
+    _draw_fitted_text(canvas, card.key, text_x, key_top, text_width, _scale_y(42), FONT_BOLD, 18, 11, 1)
+    _draw_fitted_text(canvas, card.title, text_x, summary_top, text_width, _scale_y(230), FONT_BOLD, 17, 9, 5)
 
 
 def _draw_user_story_template(canvas: Canvas, card: PrintableCard, x: float, y: float, padding: float) -> None:
     text_x = x + max(padding, _scale_x(13))
     text_width = CARD_WIDTH - (2 * max(padding, _scale_x(13)))
-    header_y = y + CARD_HEIGHT - _scale_y(38)
-    summary_y = y + CARD_HEIGHT - _scale_y(84)
+    header_top = y + CARD_HEIGHT - _scale_y(28)
+    summary_top = y + CARD_HEIGHT - _scale_y(72)
 
     canvas.setFillColor(colors.black)
-    canvas.setFont(FONT_BOLD, 21)
     header = f"{card.issue_type or 'User Story'} {card.key}"
-    for line_index, line in enumerate(_wrap_text(header, text_width, FONT_BOLD, 21, 1)):
-        canvas.drawString(text_x, header_y - (line_index * 24), line)
-
-    canvas.setFont(FONT_BOLD, 21)
-    for line_index, line in enumerate(_wrap_text(card.title, text_width, FONT_BOLD, 21, 4)):
-        canvas.drawString(text_x, summary_y - (line_index * 24), line)
+    _draw_fitted_text(canvas, header, text_x, header_top, text_width, _scale_y(33), FONT_BOLD, 15, 8, 1)
+    _draw_fitted_text(canvas, card.title, text_x, summary_top, text_width, _scale_y(145), FONT_BOLD, 15, 8, 4)
 
     if card.story_points is not None:
-        canvas.setFont(FONT_BOLD, 44)
+        canvas.setFont(FONT_BOLD, 31)
         story_points = _format_story_points(card.story_points)
-        canvas.drawRightString(x + CARD_WIDTH - max(padding, _scale_x(18)), y + _scale_y(98), story_points)
+        canvas.drawRightString(x + CARD_WIDTH - max(padding, _scale_x(22)), y + _scale_y(89), story_points)
 
-    footer_y = y + _scale_y(42)
-    _draw_lightning_icon(canvas, x + _scale_x(17), footer_y - _scale_y(19), _scale_x(25), _scale_y(32))
+    footer_y = y + _scale_y(38)
+    _draw_lightning_icon(canvas, x + _scale_x(17), footer_y - _scale_y(15), _scale_x(20), _scale_y(26))
     canvas.setFillColor(colors.black)
-    canvas.setFont(FONT_REGULAR, 22)
-    canvas.drawString(x + _scale_x(52), footer_y, f"FEATURE {card.feature_key}")
+    footer_x = x + _scale_x(45)
+    footer_width = CARD_WIDTH - footer_x + x - max(padding, _scale_x(10))
+    _draw_fitted_text(
+        canvas,
+        f"FEATURE {card.feature_key}",
+        footer_x,
+        footer_y,
+        footer_width,
+        _scale_y(24),
+        FONT_REGULAR,
+        15,
+        7,
+        1,
+    )
 
 
 def _draw_lightning_icon(canvas: Canvas, x: float, y: float, width: float, height: float) -> None:
@@ -250,6 +254,41 @@ def _wrap_text(text: str, width: float, font_name: str, font_size: int, max_line
         lines[-1] = f"{last_line}..." if last_line else "..."
 
     return lines or [""]
+
+
+def _draw_fitted_text(
+    canvas: Canvas,
+    text: str,
+    x: float,
+    top_y: float,
+    width: float,
+    height: float,
+    font_name: str,
+    max_font_size: int,
+    min_font_size: int,
+    max_lines: int,
+) -> None:
+    for font_size in range(max_font_size, min_font_size - 1, -1):
+        line_height = font_size * 1.12
+        allowed_lines = min(max_lines, max(1, int(height // line_height)))
+        lines = _wrap_text(text, width, font_name, font_size, allowed_lines)
+        if len(lines) * line_height <= height:
+            canvas.setFont(font_name, font_size)
+            for line_index, line in enumerate(lines):
+                canvas.drawString(x, top_y - (line_index * line_height), line)
+            return
+
+    canvas.setFont(font_name, min_font_size)
+    canvas.drawString(x, top_y, _ellipsize(text, width, font_name, min_font_size))
+
+
+def _ellipsize(text: str, width: float, font_name: str, font_size: int) -> str:
+    if canvas_width(text, font_name, font_size) <= width:
+        return text
+    shortened = text
+    while shortened and canvas_width(f"{shortened}...", font_name, font_size) > width:
+        shortened = shortened[:-1].rstrip()
+    return f"{shortened}..." if shortened else "..."
 
 
 def canvas_width(text: str, font_name: str, font_size: int) -> float:
