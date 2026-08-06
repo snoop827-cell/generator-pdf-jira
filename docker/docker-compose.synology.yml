@@ -1,0 +1,20 @@
+services:
+  jira-card-generator-backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    image: jira-card-generator-backend:latest
+    container_name: jira-card-generator-backend
+    restart: unless-stopped
+    environment:
+      APP_ENV: production
+      APP_TMP_DIR: /tmp/jira-card-generator
+      APP_MAX_UPLOAD_MB: "25"
+    ports:
+      - "8000:8000"
+    volumes:
+      - jira-card-generator-tmp:/tmp/jira-card-generator
+
+volumes:
+  jira-card-generator-tmp:
+

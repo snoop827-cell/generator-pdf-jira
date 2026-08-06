@@ -20,6 +20,26 @@ Synology NAS
     volume temporaire pour generations
 ```
 
+## Deploiement backend avec Container Manager
+
+Depuis le NAS ou une machine ayant acces au Docker du NAS :
+
+```bash
+docker compose -f docker/docker-compose.synology.yml up -d --build
+```
+
+Controle de sante :
+
+```bash
+curl http://IP_DU_NAS:8000/health
+```
+
+Reponse attendue :
+
+```json
+{"status":"ok"}
+```
+
 ## Points a preciser lors des prochaines etapes
 
 - Stack exacte du portail existant.
@@ -36,5 +56,4 @@ APP_TMP_DIR=/tmp/jira-card-generator
 APP_MAX_UPLOAD_MB=25
 ```
 
-Ces valeurs seront stabilisees quand l'API et le moteur PDF seront ajoutes.
-
+Ces variables sont deja declarees dans le `docker-compose` backend. Elles pourront etre completees quand le frontend sera integre au portail.

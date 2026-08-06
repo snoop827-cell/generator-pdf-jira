@@ -70,6 +70,26 @@ Endpoints disponibles :
 - `POST /api/generate/summary`
 - `POST /api/generate`
 
+## Docker
+
+Construire l'image backend :
+
+```powershell
+docker build -f docker/Dockerfile.backend -t jira-card-generator-backend .
+```
+
+Demarrer avec Docker Compose :
+
+```powershell
+docker compose -f docker/docker-compose.synology.yml up -d --build
+```
+
+L'API sera disponible sur :
+
+```text
+http://localhost:8000/health
+```
+
 ## Contraintes de conception
 
 - Le moteur metier ne depend pas de FastAPI, React ou ReportLab.
