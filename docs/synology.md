@@ -43,7 +43,7 @@ Reponse attendue :
 Interface web :
 
 ```text
-http://IP_DU_NAS:8091/jira-cards/
+http://IP_DU_NAS:8092/jira-cards/
 ```
 
 Via le gateway central :
