@@ -5,7 +5,7 @@ from pypdf import PdfReader
 from backend.core.models import ColorMode, Feature, GenerationOptions, UserStory
 from backend.layout.pagination import paginate_feature, paginate_features
 from backend.pdf.constants import CARD_HEIGHT, CARD_WIDTH
-from backend.pdf.renderer import render_feature_pdf
+from backend.pdf.renderer import render_feature_pdf, _wrap_text
 from backend.pdf.service import render_feature_pdfs
 
 
@@ -100,3 +100,10 @@ def test_render_feature_pdfs_returns_paths_and_summary(tmp_path: Path) -> None:
 def test_card_dimensions_are_nine_by_six_centimeters() -> None:
     assert round(CARD_WIDTH, 2) == 255.12
     assert round(CARD_HEIGHT, 2) == 170.08
+
+
+def test_wrap_text_does_not_add_ellipsis_when_single_line_fits() -> None:
+    assert _wrap_text("Story YFPYC-419", 500, "Helvetica-Bold", 15, 1) == ["Story YFPYC-419"]
+    assert _wrap_text("FEATURE TSYCPROGRM-233", 500, "Helvetica-Bold", 15, 1) == [
+        "FEATURE TSYCPROGRM-233"
+    ]

@@ -275,8 +275,9 @@ def _wrap_text(text: str, width: float, font_name: str, font_size: int, max_line
     words = text.split()
     lines: list[str] = []
     current_line = ""
+    was_truncated = False
 
-    for word in words:
+    for word_index, word in enumerate(words):
         candidate = f"{current_line} {word}".strip()
         if canvas_width(candidate, font_name, font_size) <= width:
             current_line = candidate
@@ -287,12 +288,13 @@ def _wrap_text(text: str, width: float, font_name: str, font_size: int, max_line
         current_line = word
 
         if len(lines) == max_lines:
+            was_truncated = word_index < len(words)
             break
 
     if current_line and len(lines) < max_lines:
         lines.append(current_line)
 
-    if len(lines) == max_lines and words:
+    if was_truncated and len(lines) == max_lines and words:
         last_line = lines[-1]
         while canvas_width(f"{last_line}...", font_name, font_size) > width and last_line:
             last_line = last_line[:-1].rstrip()
