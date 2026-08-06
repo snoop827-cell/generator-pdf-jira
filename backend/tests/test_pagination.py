@@ -49,6 +49,7 @@ def test_eighth_user_story_goes_to_second_page() -> None:
     assert print_job.page_count == 2
     assert [page.card_count for page in print_job.pages] == [8, 1]
     assert print_job.pages[1].cards[0].key == "PROJ-8"
+    assert print_job.pages[1].cards[0].issue_type == "Story"
 
 
 def test_following_pages_contain_eight_user_stories_maximum() -> None:
@@ -76,4 +77,3 @@ def test_paginate_features_creates_one_print_job_per_feature() -> None:
     print_jobs = paginate_features([make_feature(1, "FEAT-1"), make_feature(2, "FEAT-2")])
 
     assert [print_job.feature.key for print_job in print_jobs] == ["FEAT-1", "FEAT-2"]
-

@@ -23,6 +23,7 @@ class PrintableCard(BaseModel):
     kind: CardKind
     key: str = Field(min_length=1)
     title: str = Field(min_length=1)
+    issue_type: str | None = None
     story_points: float | None = None
     feature_key: str = Field(min_length=1)
 
@@ -101,6 +102,7 @@ def _story_card(story: UserStory) -> PrintableCard:
         kind=CardKind.USER_STORY,
         key=story.key,
         title=story.summary,
+        issue_type=story.issue_type,
         story_points=story.story_points,
         feature_key=story.feature_key,
     )
@@ -123,4 +125,3 @@ def _validate_pages(feature: Feature, pages: list[PrintablePage]) -> None:
             raise CsvValidationError(f"Page {page.number} contains more than 8 cards.")
         if not page.cards:
             raise CsvValidationError(f"Page {page.number} is empty.")
-

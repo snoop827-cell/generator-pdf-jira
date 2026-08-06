@@ -108,6 +108,7 @@ http://localhost:8080/jira-cards/
 - Les cartes PDF mesurent 9 cm x 6 cm.
 - Le mode noir et blanc conserve un contour fin pour faciliter la decoupe.
 - Chaque page PDF contient des reperes de coupe autour de la grille de cartes.
+- Les modeles PSD/PNG fournis sont conserves dans `docs/templates/` comme references graphiques.
 - L'archive ZIP contient les PDF tries par nom de fichier pour garder un resultat stable.
 - La couleur d'une Feature est calculee depuis un hash stable de sa cle.
 

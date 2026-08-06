@@ -49,7 +49,7 @@ def test_render_feature_pdf_contains_expected_text(tmp_path: Path) -> None:
     text = "\n".join(page.extract_text() or "" for page in PdfReader(output_path).pages)
 
     assert "FEATURE" in text
-    assert "USER STORY" in text
+    assert "Story PROJ-1" in text
     assert "FEAT-1" in text
     assert "PROJ-1" in text
 
@@ -70,4 +70,3 @@ def test_render_feature_pdfs_returns_paths_and_summary(tmp_path: Path) -> None:
 def test_card_dimensions_are_nine_by_six_centimeters() -> None:
     assert round(CARD_WIDTH, 2) == 255.12
     assert round(CARD_HEIGHT, 2) == 170.08
-

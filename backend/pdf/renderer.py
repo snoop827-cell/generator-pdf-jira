@@ -24,6 +24,8 @@ from backend.pdf.constants import (
     PAGE_MARGIN_X,
     PAGE_MARGIN_Y,
     PAGE_WIDTH,
+    TEMPLATE_HEIGHT,
+    TEMPLATE_WIDTH,
 )
 
 
@@ -136,43 +138,88 @@ def _draw_card(canvas: Canvas, card: PrintableCard, x: float, y: float, options:
     content_y = y + CARD_HEIGHT - padding
     content_width = CARD_WIDTH - (2 * padding)
 
-    _draw_header(canvas, card, content_x, content_y, content_width)
-    _draw_title(canvas, card, content_x, content_y - 25, content_width)
-    _draw_footer(canvas, card, content_x, y + padding, content_width)
+    if card.kind == CardKind.FEATURE:
+        _draw_feature_template(canvas, card, x, y, padding)
+    else:
+        _draw_user_story_template(canvas, card, x, y, padding)
     canvas.restoreState()
 
 
-def _draw_header(canvas: Canvas, card: PrintableCard, x: float, y: float, width: float) -> None:
-    label = "FEATURE" if card.kind == CardKind.FEATURE else "USER STORY"
-    canvas.setFillColor(colors.black)
-    canvas.setFont(FONT_BOLD, 9)
-    canvas.drawString(x, y, label)
-    canvas.setFont(FONT_BOLD, 12)
-    canvas.drawRightString(x + width, y, card.key)
-
-
-def _draw_title(canvas: Canvas, card: PrintableCard, x: float, y: float, width: float) -> None:
-    font_size = 15 if card.kind == CardKind.FEATURE else 13
-    line_height = font_size + 3
-    max_lines = 4
+def _draw_feature_template(canvas: Canvas, card: PrintableCard, x: float, y: float, padding: float) -> None:
+    icon_x = x + _scale_x(13)
+    header_y = y + CARD_HEIGHT - _scale_y(42)
+    _draw_lightning_icon(canvas, icon_x, header_y - _scale_y(14), _scale_x(38), _scale_y(50))
 
     canvas.setFillColor(colors.black)
-    canvas.setFont(FONT_BOLD, font_size)
+    canvas.setFont(FONT_REGULAR, 26)
+    canvas.drawString(x + _scale_x(58), header_y, "FEATURE")
 
-    lines = _wrap_text(card.title, width, FONT_BOLD, font_size, max_lines)
-    for line_index, line in enumerate(lines):
-        canvas.drawString(x, y - (line_index * line_height), line)
+    text_x = x + max(padding, _scale_x(15))
+    text_width = CARD_WIDTH - (2 * max(padding, _scale_x(15)))
+    key_y = y + CARD_HEIGHT - _scale_y(124)
+    summary_y = y + CARD_HEIGHT - _scale_y(171)
+
+    canvas.setFont(FONT_BOLD, 26)
+    for line_index, line in enumerate(_wrap_text(card.key, text_width, FONT_BOLD, 26, 1)):
+        canvas.drawString(text_x, key_y - (line_index * 30), line)
+    for line_index, line in enumerate(_wrap_text(card.title, text_width, FONT_BOLD, 25, 3)):
+        canvas.drawString(text_x, summary_y - (line_index * 29), line)
 
 
-def _draw_footer(canvas: Canvas, card: PrintableCard, x: float, y: float, width: float) -> None:
+def _draw_user_story_template(canvas: Canvas, card: PrintableCard, x: float, y: float, padding: float) -> None:
+    text_x = x + max(padding, _scale_x(13))
+    text_width = CARD_WIDTH - (2 * max(padding, _scale_x(13)))
+    header_y = y + CARD_HEIGHT - _scale_y(38)
+    summary_y = y + CARD_HEIGHT - _scale_y(84)
+
     canvas.setFillColor(colors.black)
-    canvas.setFont(FONT_REGULAR, 8)
-    canvas.drawString(x, y, card.feature_key)
+    canvas.setFont(FONT_BOLD, 21)
+    header = f"{card.issue_type or 'User Story'} {card.key}"
+    for line_index, line in enumerate(_wrap_text(header, text_width, FONT_BOLD, 21, 1)):
+        canvas.drawString(text_x, header_y - (line_index * 24), line)
 
-    if card.kind == CardKind.USER_STORY and card.story_points is not None:
-        canvas.setFont(FONT_BOLD, 20)
+    canvas.setFont(FONT_BOLD, 21)
+    for line_index, line in enumerate(_wrap_text(card.title, text_width, FONT_BOLD, 21, 4)):
+        canvas.drawString(text_x, summary_y - (line_index * 24), line)
+
+    if card.story_points is not None:
+        canvas.setFont(FONT_BOLD, 44)
         story_points = _format_story_points(card.story_points)
-        canvas.drawRightString(x + width, y, story_points)
+        canvas.drawRightString(x + CARD_WIDTH - max(padding, _scale_x(18)), y + _scale_y(98), story_points)
+
+    footer_y = y + _scale_y(42)
+    _draw_lightning_icon(canvas, x + _scale_x(17), footer_y - _scale_y(19), _scale_x(25), _scale_y(32))
+    canvas.setFillColor(colors.black)
+    canvas.setFont(FONT_REGULAR, 22)
+    canvas.drawString(x + _scale_x(52), footer_y, f"FEATURE {card.feature_key}")
+
+
+def _draw_lightning_icon(canvas: Canvas, x: float, y: float, width: float, height: float) -> None:
+    points = [
+        x + width * 0.62,
+        y + height,
+        x + width * 0.08,
+        y + height * 0.43,
+        x + width * 0.42,
+        y + height * 0.43,
+        x + width * 0.28,
+        y,
+        x + width * 0.92,
+        y + height * 0.62,
+        x + width * 0.55,
+        y + height * 0.62,
+    ]
+    canvas.saveState()
+    canvas.setStrokeColor(colors.HexColor("#B052F2"))
+    canvas.setLineWidth(2.2)
+    canvas.setFillColor(colors.white)
+    path = canvas.beginPath()
+    path.moveTo(points[0], points[1])
+    for index in range(2, len(points), 2):
+        path.lineTo(points[index], points[index + 1])
+    path.close()
+    canvas.drawPath(path, stroke=1, fill=0)
+    canvas.restoreState()
 
 
 def _wrap_text(text: str, width: float, font_name: str, font_size: int, max_lines: int) -> list[str]:
@@ -207,6 +254,14 @@ def _wrap_text(text: str, width: float, font_name: str, font_size: int, max_line
 
 def canvas_width(text: str, font_name: str, font_size: int) -> float:
     return pdfmetrics.stringWidth(text, font_name, font_size)
+
+
+def _scale_x(value: float) -> float:
+    return (value / TEMPLATE_WIDTH) * CARD_WIDTH
+
+
+def _scale_y(value: float) -> float:
+    return (value / TEMPLATE_HEIGHT) * CARD_HEIGHT
 
 
 def _format_story_points(story_points: float) -> str:

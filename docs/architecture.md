@@ -29,6 +29,8 @@ Regles implementees :
 
 Le moteur PDF consomme les objets de pagination. Il ne lit pas directement le CSV et ne regroupe pas les tickets.
 
+Les modeles Photoshop fournis sont conserves dans `docs/templates/` comme reference graphique. Le rendu final reste implemente en ReportLab afin de garder une generation deterministe et sans dependance a Photoshop au runtime.
+
 Regles implementees :
 
 - format A4 ;
