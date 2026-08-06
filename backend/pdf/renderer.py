@@ -206,7 +206,7 @@ def _draw_user_story_template(canvas: Canvas, card: PrintableCard, x: float, y: 
     feature_text_width = content_right - feature_text_x
 
     canvas.setFillColor(colors.black)
-    header = f"{card.issue_type or 'User Story'} {card.key}"
+    header = card.key
     _draw_fitted_text(canvas, header, content_left, header_top, content_width, title_font_size + 2, FONT_BOLD, 20, 9, 1)
 
     _draw_fitted_text(

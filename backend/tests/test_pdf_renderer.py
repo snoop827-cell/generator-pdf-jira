@@ -49,7 +49,7 @@ def test_render_feature_pdf_contains_expected_text(tmp_path: Path) -> None:
     text = "\n".join(page.extract_text() or "" for page in PdfReader(output_path).pages)
 
     assert "FEATURE" in text
-    assert "Story PROJ-1" in text
+    assert "PROJ-1" in text
     assert "FEAT-1" in text
     assert "PROJ-1" in text
 
@@ -103,7 +103,7 @@ def test_card_dimensions_are_nine_by_six_centimeters() -> None:
 
 
 def test_wrap_text_does_not_add_ellipsis_when_single_line_fits() -> None:
-    assert _wrap_text("Story YFPYC-419", 500, "Helvetica-Bold", 15, 1) == ["Story YFPYC-419"]
+    assert _wrap_text("YFPYC-419", 500, "Helvetica-Bold", 15, 1) == ["YFPYC-419"]
     assert _wrap_text("FEATURE TSYCPROGRM-233", 500, "Helvetica-Bold", 15, 1) == [
         "FEATURE TSYCPROGRM-233"
     ]
