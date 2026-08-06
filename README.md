@@ -33,6 +33,7 @@ jira-card-generator/
   docs/
   docker/
   frontend/
+    src/         Interface React/Vite integree au portail
 ```
 
 ## Installation
@@ -88,6 +89,12 @@ L'API sera disponible sur :
 
 ```text
 http://localhost:8000/health
+```
+
+Interface web :
+
+```text
+http://localhost:8080/jira-cards/
 ```
 
 ## Contraintes de conception
@@ -154,5 +161,5 @@ La documentation de deploiement Synology sera detaillee dans `docs/synology.md`.
 ## Prochaines etapes
 
 1. Affiner le rendu PDF avec les modeles `Feature.pdf` et `UserStory.pdf`.
-2. Integrer le frontend dans la stack du portail existant.
-3. Completer Docker et la documentation de deploiement Synology.
+2. Affiner l'integration exacte dans le portail existant.
+3. Completer la fidelite PDF avec les modeles `Feature.pdf` et `UserStory.pdf`.

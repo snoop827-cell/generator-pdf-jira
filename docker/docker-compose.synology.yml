@@ -15,6 +15,17 @@ services:
     volumes:
       - jira-card-generator-tmp:/tmp/jira-card-generator
 
+  jira-card-generator-frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    image: jira-card-generator-frontend:latest
+    container_name: jira-card-generator-frontend
+    restart: unless-stopped
+    depends_on:
+      - jira-card-generator-backend
+    ports:
+      - "8080:80"
+
 volumes:
   jira-card-generator-tmp:
-

@@ -16,7 +16,7 @@ Cette application devra etre deployable sur un NAS Synology, idealement via Dock
 Synology NAS
   Container Manager / Docker
     backend FastAPI
-    frontend portail existant + application integree
+    frontend React/Vite servi par nginx
     volume temporaire pour generations
 ```
 
@@ -38,6 +38,12 @@ Reponse attendue :
 
 ```json
 {"status":"ok"}
+```
+
+Interface web :
+
+```text
+http://IP_DU_NAS:8080/jira-cards/
 ```
 
 ## Points a preciser lors des prochaines etapes
