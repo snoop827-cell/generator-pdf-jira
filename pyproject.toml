@@ -1,0 +1,25 @@
+[project]
+name = "jira-card-generator"
+version = "0.1.0"
+description = "Deterministic Jira CSV to printable card PDF generator."
+readme = "README.md"
+requires-python = ">=3.13,<3.15"
+dependencies = [
+    "pandas>=2.2",
+    "pydantic>=2.8",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+]
+pdf = [
+    "pillow>=10.4",
+    "pypdf>=4.3",
+    "reportlab>=4.2",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["backend/tests"]
+
