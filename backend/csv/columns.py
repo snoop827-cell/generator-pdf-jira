@@ -58,9 +58,7 @@ ALIASES: dict[str, tuple[str, ...]] = {
     ),
     "parent_key": (
         "cle parent",
-        "parent",
         "parent key",
-        "parent id",
         "parent issue key",
     ),
     "parent_summary": (
@@ -101,4 +99,3 @@ def detect_columns(columns: list[str]) -> JiraColumnMapping:
         raise CsvMappingError(f"Missing required Jira CSV columns: {missing_labels}")
 
     return JiraColumnMapping(**matches)
-

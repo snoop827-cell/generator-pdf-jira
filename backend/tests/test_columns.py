@@ -29,7 +29,36 @@ def test_detect_columns_with_jira_variants() -> None:
     assert mapping.parent_summary == "Parent summary"
 
 
+def test_detect_columns_uses_parent_key_not_generic_parent_column() -> None:
+    mapping = detect_columns(
+        [
+            "Type de ticket",
+            "Clé de ticket",
+            "Résumé",
+            "Champs personnalisés (Story Points)",
+            "Parent",
+            "Clé parent",
+            "Parent summary",
+        ]
+    )
+
+    assert mapping.parent_key == "Clé parent"
+
+
 def test_detect_columns_reports_missing_columns() -> None:
     with pytest.raises(CsvMappingError):
         detect_columns(["Clé de ticket"])
 
+
+def test_detect_columns_rejects_generic_parent_without_parent_key() -> None:
+    with pytest.raises(CsvMappingError):
+        detect_columns(
+            [
+                "Type de ticket",
+                "Clé de ticket",
+                "Résumé",
+                "Champs personnalisés (Story Points)",
+                "Parent",
+                "Parent summary",
+            ]
+        )
