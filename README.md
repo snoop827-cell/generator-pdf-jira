@@ -12,6 +12,7 @@ Le projet est construit progressivement. Cette premiere etape met en place le mo
 - Regrouper les tickets par Feature, via la cle parent.
 - Paginer les cartes selon les regles d'impression A4.
 - Generer un PDF A4 par Feature.
+- Generer une archive ZIP contenant les PDF.
 - Produire des modeles metier reutilisables par une API, une CLI ou un script.
 - Calculer une couleur stable et deterministe par Feature.
 
@@ -61,6 +62,7 @@ python -m pytest
 - La premiere page contient 1 carte Feature puis jusqu'a 7 User Stories.
 - Les pages suivantes contiennent jusqu'a 8 User Stories.
 - Les cartes PDF mesurent 9 cm x 6 cm.
+- L'archive ZIP contient les PDF tries par nom de fichier pour garder un resultat stable.
 - La couleur d'une Feature est calculee depuis un hash stable de sa cle.
 
 ## Deroule de versionnement Git
@@ -115,7 +117,6 @@ La documentation de deploiement Synology sera detaillee dans `docs/synology.md`.
 ## Prochaines etapes
 
 1. Affiner le rendu PDF avec les modeles `Feature.pdf` et `UserStory.pdf`.
-2. Ajouter la generation ZIP.
-3. Ajouter l'API FastAPI autour du moteur metier.
-4. Integrer le frontend dans la stack du portail existant.
-5. Completer Docker et la documentation de deploiement Synology.
+2. Ajouter l'API FastAPI autour du moteur metier.
+3. Integrer le frontend dans la stack du portail existant.
+4. Completer Docker et la documentation de deploiement Synology.

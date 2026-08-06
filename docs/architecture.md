@@ -36,3 +36,14 @@ Regles implementees :
 - mode noir et blanc sans contour ;
 - mode couleur avec contour plein de 3 mm ;
 - couleur stable derivee de la cle Feature.
+
+## Generation ZIP
+
+La creation de l'archive est separee du rendu PDF.
+
+Regles implementees :
+
+- refus d'une archive vide ;
+- controle de l'existence de chaque PDF ;
+- tri des PDF par nom de fichier avant ajout a l'archive ;
+- conservation des noms de fichiers sans chemin local dans l'archive.
