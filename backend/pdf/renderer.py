@@ -191,9 +191,9 @@ def _draw_user_story_template(canvas: Canvas, card: PrintableCard, x: float, y: 
     content_bottom = y + inner_margin
     content_width = content_right - content_left
 
-    title_font_size = 20
-    summary_font_size = 15
-    feature_font_size = 20
+    title_font_size = 15
+    summary_font_size = 12
+    feature_font_size = 15
     story_points_font_size = 40
 
     header_top = content_top - _scale_y(3)
