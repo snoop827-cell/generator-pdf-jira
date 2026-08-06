@@ -231,6 +231,16 @@ function SummaryScreen({
   onReset,
   onSetColorMode
 }) {
+  const featureDetails = Array.isArray(analysis.feature_details)
+    ? analysis.feature_details
+    : (analysis.features || []).map((feature) => ({
+        key: feature,
+        summary: '',
+        label: feature,
+        user_story_count: '-',
+        page_count: '-'
+      }));
+
   return (
     <div className="stack">
       <div className="section-heading">
@@ -280,11 +290,11 @@ function SummaryScreen({
           <span>US</span>
           <span>Pages</span>
         </div>
-        {analysis.feature_details.map((feature) => (
-          <div className="feature-table-row" key={feature.key}>
+        {featureDetails.map((feature) => (
+          <div className="feature-table-row" key={feature.label || feature.key}>
             <div>
               <strong>{feature.key}</strong>
-              <span>{feature.summary}</span>
+              {feature.summary ? <span>{feature.summary}</span> : null}
             </div>
             <span className="pill">{feature.user_story_count}</span>
             <span className="pill">{feature.page_count}</span>
