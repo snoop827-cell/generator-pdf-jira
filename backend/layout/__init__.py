@@ -1,0 +1,2 @@
+"""Printable card layout rules."""
+

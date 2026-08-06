@@ -10,6 +10,7 @@ Le projet est construit progressivement. Cette premiere etape met en place le mo
 - Detecter les colonnes utiles avec tolerance sur la casse, les accents, les espaces et certains synonymes.
 - Nettoyer les donnees.
 - Regrouper les tickets par Feature, via la cle parent.
+- Paginer les cartes selon les regles d'impression A4.
 - Produire des modeles metier reutilisables par une API, une CLI ou un script.
 - Calculer une couleur stable et deterministe par Feature.
 
@@ -21,6 +22,7 @@ jira-card-generator/
     colors/      Couleurs stables par Feature
     core/        Modeles et exceptions metier
     csv/         Lecture, nettoyage et mapping CSV Jira
+    layout/      Regles de pagination imprimable
     services/    Cas d'utilisation metier
     tests/       Tests unitaires
   docs/
@@ -53,6 +55,9 @@ python -m pytest
 - Le moteur metier ne depend pas de FastAPI, React ou ReportLab.
 - Les traitements sont deterministes.
 - Le regroupement se fait obligatoirement par cle parent.
+- La pagination limite chaque page A4 a 8 cartes.
+- La premiere page contient 1 carte Feature puis jusqu'a 7 User Stories.
+- Les pages suivantes contiennent jusqu'a 8 User Stories.
 - La couleur d'une Feature est calculee depuis un hash stable de sa cle.
 
 ## Deroule de versionnement Git
@@ -106,8 +111,8 @@ La documentation de deploiement Synology sera detaillee dans `docs/synology.md`.
 
 ## Prochaines etapes
 
-1. Ajouter l'API FastAPI autour du moteur metier.
-2. Ajouter le moteur PDF ReportLab.
-3. Ajouter la generation ZIP.
+1. Ajouter le moteur PDF ReportLab.
+2. Ajouter la generation ZIP.
+3. Ajouter l'API FastAPI autour du moteur metier.
 4. Integrer le frontend dans la stack du portail existant.
-5. Completer Docker et la documentation de deploiement.
+5. Completer Docker et la documentation de deploiement Synology.
