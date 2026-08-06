@@ -74,6 +74,17 @@ def _draw_card(canvas: Canvas, card: PrintableCard, x: float, y: float, options:
             fill=0,
         )
         padding = CARD_PADDING_WITH_BORDER
+    else:
+        canvas.setStrokeColor(colors.black)
+        canvas.setLineWidth(0.5)
+        canvas.rect(
+            x,
+            y,
+            CARD_WIDTH,
+            CARD_HEIGHT,
+            stroke=1,
+            fill=0,
+        )
 
     content_x = x + padding
     content_y = y + CARD_HEIGHT - padding

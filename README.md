@@ -106,6 +106,7 @@ http://localhost:8080/jira-cards/
 - La premiere page contient 1 carte Feature puis jusqu'a 7 User Stories.
 - Les pages suivantes contiennent jusqu'a 8 User Stories.
 - Les cartes PDF mesurent 9 cm x 6 cm.
+- Le mode noir et blanc conserve un contour fin pour faciliter la decoupe.
 - L'archive ZIP contient les PDF tries par nom de fichier pour garder un resultat stable.
 - La couleur d'une Feature est calculee depuis un hash stable de sa cle.
 
