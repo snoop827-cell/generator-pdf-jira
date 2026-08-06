@@ -240,6 +240,10 @@ function SummaryScreen({
         user_story_count: '-',
         page_count: '-'
       }));
+  const totalPages = featureDetails.reduce((total, feature) => {
+    const pageCount = Number(feature.page_count);
+    return Number.isFinite(pageCount) ? total + pageCount : total;
+  }, 0);
 
   return (
     <div className="stack">
@@ -251,12 +255,6 @@ function SummaryScreen({
         <button className="secondary" type="button" onClick={onReset}>
           Changer de CSV
         </button>
-      </div>
-
-      <div className="info-grid">
-        <InfoCard label="Tickets" value={analysis.ticket_count} />
-        <InfoCard label="Features" value={analysis.feature_count} />
-        <InfoCard label="Mode" value={colorMode === 'color' ? 'Couleur' : 'Noir et blanc'} />
       </div>
 
       <div className="choice-group">
@@ -286,9 +284,9 @@ function SummaryScreen({
 
       <div className="feature-table">
         <div className="feature-table-head">
-          <span>Feature</span>
-          <span>US</span>
-          <span>Pages</span>
+          <span>Feature ({analysis.feature_count})</span>
+          <span>US ({analysis.ticket_count})</span>
+          <span>Pages ({totalPages})</span>
         </div>
         {featureDetails.map((feature) => (
           <div className="feature-table-row" key={feature.label || feature.key}>
