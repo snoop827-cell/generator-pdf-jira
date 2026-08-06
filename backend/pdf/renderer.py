@@ -26,6 +26,7 @@ from backend.pdf.constants import (
     PAGE_WIDTH,
     TEMPLATE_HEIGHT,
     TEMPLATE_WIDTH,
+    USER_STORY_INNER_MARGIN,
 )
 
 
@@ -183,25 +184,30 @@ def _draw_feature_template(canvas: Canvas, card: PrintableCard, x: float, y: flo
 
 
 def _draw_user_story_template(canvas: Canvas, card: PrintableCard, x: float, y: float, padding: float) -> None:
-    content_left = x + padding
-    content_right = x + CARD_WIDTH - padding
-    content_top = y + CARD_HEIGHT - padding
-    content_bottom = y + padding
+    inner_margin = max(padding, USER_STORY_INNER_MARGIN)
+    content_left = x + inner_margin
+    content_right = x + CARD_WIDTH - inner_margin
+    content_top = y + CARD_HEIGHT - inner_margin
+    content_bottom = y + inner_margin
     content_width = content_right - content_left
 
-    header_top = content_top - _scale_y(5)
-    summary_top = header_top - _scale_y(30)
-    footer_y = content_bottom + _scale_y(20)
-    points_baseline = content_bottom + _scale_y(56)
-    footer_reserved_width = content_width - _scale_x(54)
+    title_font_size = 20
+    summary_font_size = 15
+    feature_font_size = 20
+    story_points_font_size = 40
+
+    header_top = content_top - _scale_y(3)
+    summary_top = header_top - title_font_size - (5 * 2.8346456693)
+    feature_baseline = content_bottom + feature_font_size * 0.15
+    points_baseline = feature_baseline + feature_font_size + _scale_y(24)
+    icon_width = feature_font_size * 0.78
+    icon_height = feature_font_size * 1.05
+    feature_text_x = content_left + icon_width + _scale_x(8)
+    feature_text_width = content_right - feature_text_x
 
     canvas.setFillColor(colors.black)
     header = f"{card.issue_type or 'User Story'} {card.key}"
-    _draw_fitted_text(canvas, header, content_left, header_top, content_width, _scale_y(22), FONT_BOLD, 11, 7, 1)
-
-    canvas.setStrokeColor(colors.HexColor("#E5E7EB"))
-    canvas.setLineWidth(0.6)
-    canvas.line(content_left, header_top - _scale_y(19), content_right, header_top - _scale_y(19))
+    _draw_fitted_text(canvas, header, content_left, header_top, content_width, title_font_size + 2, FONT_BOLD, 20, 9, 1)
 
     _draw_fitted_text(
         canvas,
@@ -211,28 +217,27 @@ def _draw_user_story_template(canvas: Canvas, card: PrintableCard, x: float, y: 
         content_width,
         summary_top - (points_baseline + _scale_y(8)),
         FONT_BOLD,
-        14,
+        summary_font_size,
         8,
         4,
     )
 
     if card.story_points is not None:
-        canvas.setFont(FONT_BOLD, 27)
+        canvas.setFont(FONT_BOLD, story_points_font_size)
         story_points = _format_story_points(card.story_points)
         canvas.drawRightString(content_right, points_baseline, story_points)
 
-    _draw_lightning_icon(canvas, content_left, footer_y - _scale_y(9), _scale_x(15), _scale_y(20))
+    _draw_lightning_icon(canvas, content_left, feature_baseline - feature_font_size * 0.2, icon_width, icon_height)
     canvas.setFillColor(colors.black)
-    footer_x = content_left + _scale_x(22)
     _draw_fitted_text(
         canvas,
         f"FEATURE {card.feature_key}",
-        footer_x,
-        footer_y,
-        footer_reserved_width,
-        _scale_y(18),
-        FONT_REGULAR,
-        10,
+        feature_text_x,
+        feature_baseline,
+        feature_text_width,
+        feature_font_size + 2,
+        FONT_BOLD,
+        feature_font_size,
         7,
         1,
     )
