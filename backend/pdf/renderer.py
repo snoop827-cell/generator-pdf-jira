@@ -15,6 +15,9 @@ from backend.pdf.constants import (
     CARD_PADDING,
     CARD_PADDING_WITH_BORDER,
     CARD_WIDTH,
+    CROP_MARK_LENGTH,
+    CROP_MARK_OFFSET,
+    CROP_MARK_WIDTH,
     FONT_BOLD,
     FONT_REGULAR,
     PAGE_HEIGHT,
@@ -39,6 +42,7 @@ def render_feature_pdf(
     canvas.setAuthor("jira-card-generator")
 
     for page in print_job.pages:
+        _draw_crop_marks(canvas)
         for index, card in enumerate(page.cards):
             x, y = _card_position(index)
             _draw_card(canvas, card, x, y, generation_options)
@@ -54,6 +58,48 @@ def _card_position(index: int) -> tuple[float, float]:
     x = PAGE_MARGIN_X + (column * CARD_WIDTH)
     y = PAGE_HEIGHT - PAGE_MARGIN_Y - ((row + 1) * CARD_HEIGHT)
     return x, y
+
+
+def _draw_crop_marks(canvas: Canvas) -> None:
+    canvas.saveState()
+    canvas.setStrokeColor(colors.black)
+    canvas.setLineWidth(CROP_MARK_WIDTH)
+
+    x_positions = [PAGE_MARGIN_X, PAGE_MARGIN_X + CARD_WIDTH, PAGE_MARGIN_X + (2 * CARD_WIDTH)]
+    y_positions = [
+        PAGE_MARGIN_Y,
+        PAGE_MARGIN_Y + CARD_HEIGHT,
+        PAGE_MARGIN_Y + (2 * CARD_HEIGHT),
+        PAGE_MARGIN_Y + (3 * CARD_HEIGHT),
+        PAGE_MARGIN_Y + (4 * CARD_HEIGHT),
+    ]
+
+    top = PAGE_MARGIN_Y + (4 * CARD_HEIGHT)
+    bottom = PAGE_MARGIN_Y
+    left = PAGE_MARGIN_X
+    right = PAGE_MARGIN_X + (2 * CARD_WIDTH)
+
+    for x in x_positions:
+        _draw_vertical_crop_mark(canvas, x, bottom, -1)
+        _draw_vertical_crop_mark(canvas, x, top, 1)
+
+    for y in y_positions:
+        _draw_horizontal_crop_mark(canvas, left, y, -1)
+        _draw_horizontal_crop_mark(canvas, right, y, 1)
+
+    canvas.restoreState()
+
+
+def _draw_vertical_crop_mark(canvas: Canvas, x: float, grid_y: float, direction: int) -> None:
+    start_y = grid_y + (direction * CROP_MARK_OFFSET)
+    end_y = start_y + (direction * CROP_MARK_LENGTH)
+    canvas.line(x, start_y, x, end_y)
+
+
+def _draw_horizontal_crop_mark(canvas: Canvas, grid_x: float, y: float, direction: int) -> None:
+    start_x = grid_x + (direction * CROP_MARK_OFFSET)
+    end_x = start_x + (direction * CROP_MARK_LENGTH)
+    canvas.line(start_x, y, end_x, y)
 
 
 def _draw_card(canvas: Canvas, card: PrintableCard, x: float, y: float, options: GenerationOptions) -> None:

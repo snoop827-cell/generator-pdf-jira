@@ -34,6 +34,7 @@ Regles implementees :
 - format A4 ;
 - grille fixe de 2 colonnes par 4 lignes ;
 - cartes de 9 cm x 6 cm ;
+- reperes de coupe autour de la grille pour faciliter l'alignement au massicot ;
 - mode noir et blanc avec contour fin de decoupe ;
 - mode couleur avec contour plein de 3 mm ;
 - couleur stable derivee de la cle Feature.
