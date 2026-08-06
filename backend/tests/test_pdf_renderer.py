@@ -48,7 +48,6 @@ def test_render_feature_pdf_contains_expected_text(tmp_path: Path) -> None:
 
     text = "\n".join(page.extract_text() or "" for page in PdfReader(output_path).pages)
 
-    assert "FEATURE" in text
     assert "PROJ-1" in text
     assert "FEAT-1" in text
     assert "PROJ-1" in text

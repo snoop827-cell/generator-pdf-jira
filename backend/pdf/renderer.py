@@ -147,28 +147,21 @@ def _draw_card(canvas: Canvas, card: PrintableCard, x: float, y: float, options:
 
 
 def _draw_feature_template(canvas: Canvas, card: PrintableCard, x: float, y: float, padding: float) -> None:
-    content_left = x + padding
-    content_right = x + CARD_WIDTH - padding
-    content_top = y + CARD_HEIGHT - padding
-    content_bottom = y + padding
+    inner_margin = max(padding, USER_STORY_INNER_MARGIN)
+    content_left = x + inner_margin
+    content_right = x + CARD_WIDTH - inner_margin
+    content_top = y + CARD_HEIGHT - inner_margin
+    content_bottom = y + inner_margin
     content_width = content_right - content_left
 
-    icon_size = _scale_x(22)
-    header_y = content_top - _scale_y(12)
-    _draw_lightning_icon(canvas, content_left, header_y - _scale_y(10), icon_size, _scale_y(28))
+    title_font_size = 15
+    summary_font_size = 12
+    title_summary_gap = (5 * 2.8346456693) * (2 / 3)
+    key_top = content_top - _scale_y(3)
+    summary_top = key_top - title_font_size - title_summary_gap
 
     canvas.setFillColor(colors.black)
-    canvas.setFont(FONT_BOLD, 12)
-    canvas.drawString(content_left + _scale_x(30), header_y, "FEATURE")
-
-    separator_y = header_y - _scale_y(20)
-    canvas.setStrokeColor(colors.HexColor("#E5E7EB"))
-    canvas.setLineWidth(0.6)
-    canvas.line(content_left, separator_y, content_right, separator_y)
-
-    key_top = separator_y - _scale_y(22)
-    summary_top = key_top - _scale_y(42)
-    _draw_fitted_text(canvas, card.key, content_left, key_top, content_width, _scale_y(30), FONT_BOLD, 14, 9, 1)
+    _draw_fitted_text(canvas, card.key, content_left, key_top, content_width, title_font_size + 2, FONT_BOLD, 15, 9, 1)
     _draw_fitted_text(
         canvas,
         card.title,
@@ -177,8 +170,8 @@ def _draw_feature_template(canvas: Canvas, card: PrintableCard, x: float, y: flo
         content_width,
         summary_top - content_bottom,
         FONT_BOLD,
-        15,
-        9,
+        summary_font_size,
+        8,
         5,
     )
 
