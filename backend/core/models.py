@@ -12,6 +12,14 @@ class GenerationOptions(BaseModel):
     color_mode: ColorMode = ColorMode.BLACK_AND_WHITE
 
 
+class GenerationSummary(BaseModel):
+    feature_count: int = Field(ge=0)
+    user_story_count: int = Field(ge=0)
+    card_count: int = Field(ge=0)
+    page_count: int = Field(ge=0)
+    pdf_count: int = Field(ge=0)
+
+
 class UserStory(BaseModel):
     model_config = ConfigDict(frozen=True)
 
@@ -33,4 +41,3 @@ class Feature(BaseModel):
     @property
     def label(self) -> str:
         return f"{self.key} - {self.summary}"
-

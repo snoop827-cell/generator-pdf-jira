@@ -11,6 +11,7 @@ Le projet est construit progressivement. Cette premiere etape met en place le mo
 - Nettoyer les donnees.
 - Regrouper les tickets par Feature, via la cle parent.
 - Paginer les cartes selon les regles d'impression A4.
+- Generer un PDF A4 par Feature.
 - Produire des modeles metier reutilisables par une API, une CLI ou un script.
 - Calculer une couleur stable et deterministe par Feature.
 
@@ -23,6 +24,7 @@ jira-card-generator/
     core/        Modeles et exceptions metier
     csv/         Lecture, nettoyage et mapping CSV Jira
     layout/      Regles de pagination imprimable
+    pdf/         Generation PDF ReportLab
     services/    Cas d'utilisation metier
     tests/       Tests unitaires
   docs/
@@ -58,6 +60,7 @@ python -m pytest
 - La pagination limite chaque page A4 a 8 cartes.
 - La premiere page contient 1 carte Feature puis jusqu'a 7 User Stories.
 - Les pages suivantes contiennent jusqu'a 8 User Stories.
+- Les cartes PDF mesurent 9 cm x 6 cm.
 - La couleur d'une Feature est calculee depuis un hash stable de sa cle.
 
 ## Deroule de versionnement Git
@@ -111,7 +114,7 @@ La documentation de deploiement Synology sera detaillee dans `docs/synology.md`.
 
 ## Prochaines etapes
 
-1. Ajouter le moteur PDF ReportLab.
+1. Affiner le rendu PDF avec les modeles `Feature.pdf` et `UserStory.pdf`.
 2. Ajouter la generation ZIP.
 3. Ajouter l'API FastAPI autour du moteur metier.
 4. Integrer le frontend dans la stack du portail existant.

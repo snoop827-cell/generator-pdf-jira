@@ -7,6 +7,7 @@
 - `backend/services` orchestre les cas d'utilisation purs, comme le regroupement par Feature.
 - `backend/colors` contient les regles deterministes de couleur.
 - `backend/layout` contient les regles de pagination imprimable, sans dependance au moteur PDF.
+- `backend/pdf` transforme les pages metier en fichiers PDF A4 imprimables.
 
 Le moteur metier reste independant de FastAPI, React, ReportLab et du systeme de fichiers, sauf au point d'entree explicite de lecture CSV.
 
@@ -22,3 +23,16 @@ Regles implementees :
 - pages suivantes : jusqu'a 8 User Stories ;
 - conservation stricte de l'ordre des tickets ;
 - controle qu'aucune User Story n'est perdue ou dupliquee.
+
+## Generation PDF
+
+Le moteur PDF consomme les objets de pagination. Il ne lit pas directement le CSV et ne regroupe pas les tickets.
+
+Regles implementees :
+
+- format A4 ;
+- grille fixe de 2 colonnes par 4 lignes ;
+- cartes de 9 cm x 6 cm ;
+- mode noir et blanc sans contour ;
+- mode couleur avec contour plein de 3 mm ;
+- couleur stable derivee de la cle Feature.
