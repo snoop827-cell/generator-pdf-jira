@@ -104,6 +104,4 @@ def test_card_dimensions_are_nine_by_six_centimeters() -> None:
 
 def test_wrap_text_does_not_add_ellipsis_when_single_line_fits() -> None:
     assert _wrap_text("YFPYC-419", 500, "Helvetica-Bold", 15, 1) == ["YFPYC-419"]
-    assert _wrap_text("FEATURE TSYCPROGRM-233", 500, "Helvetica-Bold", 15, 1) == [
-        "FEATURE TSYCPROGRM-233"
-    ]
+    assert _wrap_text("TSYCPROGRM-233", 500, "Helvetica-Bold", 12, 1) == ["TSYCPROGRM-233"]

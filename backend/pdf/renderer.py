@@ -197,7 +197,8 @@ def _draw_user_story_template(canvas: Canvas, card: PrintableCard, x: float, y: 
     story_points_font_size = 40
 
     header_top = content_top - _scale_y(3)
-    summary_top = header_top - title_font_size - (5 * 2.8346456693)
+    title_summary_gap = (5 * 2.8346456693) * (2 / 3)
+    summary_top = header_top - title_font_size - title_summary_gap
     feature_baseline = content_bottom + feature_font_size * 0.15
     points_baseline = feature_baseline + feature_font_size + _scale_y(24)
     feature_text_x = content_left
@@ -228,7 +229,7 @@ def _draw_user_story_template(canvas: Canvas, card: PrintableCard, x: float, y: 
     canvas.setFillColor(colors.black)
     _draw_fitted_text(
         canvas,
-        f"FEATURE {card.feature_key}",
+        card.feature_key,
         feature_text_x,
         feature_baseline,
         feature_text_width,
