@@ -6,7 +6,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from backend.api.schemas import AnalyzeResponse
+from backend.api.schemas import AnalyzeResponse, FeatureAnalysis
 from backend.core.models import ColorMode, GenerationOptions, GenerationSummary
 from backend.csv.reader import parse_jira_dataframe
 from backend.layout.pagination import paginate_features
@@ -19,6 +19,7 @@ def analyze_csv_bytes(content: bytes) -> AnalyzeResponse:
     dataframe = _read_dataframe(content)
     stories, mapping = parse_jira_dataframe(dataframe)
     features = group_stories_by_feature(stories)
+    print_jobs = paginate_features(features)
 
     return AnalyzeResponse(
         ticket_count=len(stories),
@@ -32,6 +33,16 @@ def analyze_csv_bytes(content: bytes) -> AnalyzeResponse:
             "parent_summary": mapping.parent_summary,
         },
         features=[feature.label for feature in features],
+        feature_details=[
+            FeatureAnalysis(
+                key=print_job.feature.key,
+                summary=print_job.feature.summary,
+                label=print_job.feature.label,
+                user_story_count=len(print_job.feature.stories),
+                page_count=print_job.page_count,
+            )
+            for print_job in print_jobs
+        ],
     )
 
 
@@ -54,4 +65,3 @@ def generate_zip_from_csv_bytes(content: bytes, color_mode: ColorMode) -> tuple[
 
 def _read_dataframe(content: bytes) -> pd.DataFrame:
     return pd.read_csv(BytesIO(content), dtype=str, keep_default_na=False)
-

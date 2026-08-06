@@ -274,10 +274,49 @@ small {
   background: rgba(245, 158, 11, 0.12);
 }
 
-.feature-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+.feature-table {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.feature-table-head,
+.feature-table-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 76px 76px;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 16px;
+}
+
+.feature-table-head {
+  background: rgba(245, 158, 11, 0.1);
+  color: #fde68a;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.feature-table-row {
+  border-top: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.feature-table-row > div {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.feature-table-row strong,
+.feature-table-row span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.feature-table-row > div span {
+  color: var(--muted);
 }
 
 .progress-list {
@@ -331,7 +370,9 @@ small {
   }
 
   .info-grid,
-  .choice-group {
+  .choice-group,
+  .feature-table-head,
+  .feature-table-row {
     grid-template-columns: 1fr;
   }
 
@@ -340,4 +381,3 @@ small {
     width: 100%;
   }
 }
-

@@ -259,7 +259,7 @@ function SummaryScreen({
             onChange={() => onSetColorMode('black_and_white')}
           />
           <strong>Noir et blanc</strong>
-          <span>Aucun contour autour des cartes.</span>
+          <span>Contour fin et reperes de coupe.</span>
         </label>
         <label className={colorMode === 'color' ? 'choice-card selected' : 'choice-card'}>
           <input
@@ -274,9 +274,21 @@ function SummaryScreen({
         </label>
       </div>
 
-      <div className="feature-list">
-        {analysis.features.map((feature) => (
-          <span className="badge" key={feature}>{feature}</span>
+      <div className="feature-table">
+        <div className="feature-table-head">
+          <span>Feature</span>
+          <span>US</span>
+          <span>Pages</span>
+        </div>
+        {analysis.feature_details.map((feature) => (
+          <div className="feature-table-row" key={feature.key}>
+            <div>
+              <strong>{feature.key}</strong>
+              <span>{feature.summary}</span>
+            </div>
+            <span className="pill">{feature.user_story_count}</span>
+            <span className="pill">{feature.page_count}</span>
+          </div>
         ))}
       </div>
 
@@ -360,4 +372,3 @@ async function readError(response) {
     return 'Une erreur est survenue.';
   }
 }
-

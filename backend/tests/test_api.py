@@ -34,6 +34,22 @@ def test_analyze_csv_returns_counts_and_detected_columns() -> None:
     assert response.json()["feature_count"] == 2
     assert response.json()["columns"]["parent_key"] == "Clé parent"
     assert response.json()["features"] == ["FEAT-1 - First feature", "FEAT-2 - Second feature"]
+    assert response.json()["feature_details"] == [
+        {
+            "key": "FEAT-1",
+            "summary": "First feature",
+            "label": "FEAT-1 - First feature",
+            "user_story_count": 2,
+            "page_count": 1,
+        },
+        {
+            "key": "FEAT-2",
+            "summary": "Second feature",
+            "label": "FEAT-2 - Second feature",
+            "user_story_count": 1,
+            "page_count": 1,
+        },
+    ]
 
 
 def test_generate_summary_returns_generation_counts() -> None:
@@ -73,4 +89,3 @@ def test_analyze_csv_rejects_empty_file() -> None:
     )
 
     assert response.status_code == 400
-
