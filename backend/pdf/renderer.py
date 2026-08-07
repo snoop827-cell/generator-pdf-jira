@@ -48,11 +48,11 @@ def render_feature_pdf(
     canvas.setAuthor("jira-card-generator")
 
     for page in print_job.pages:
-        _draw_crop_marks(canvas, page.number)
         for index, card in enumerate(page.cards):
             x, y = _card_position(page.number, index)
             width, height = _card_dimensions(card)
             _draw_card(canvas, card, x, y, width, height, generation_options)
+        _draw_crop_marks(canvas, page.number)
         canvas.showPage()
 
     canvas.save()
@@ -102,6 +102,10 @@ def _draw_crop_marks(canvas: Canvas, page_number: int) -> None:
 
 
 def _draw_regular_page_cut_lines(canvas: Canvas) -> None:
+    left = PAGE_MARGIN_X
+    right = PAGE_MARGIN_X + (2 * CARD_WIDTH)
+    bottom = PAGE_MARGIN_Y
+    top = PAGE_MARGIN_Y + (4 * CARD_HEIGHT)
     x_positions = [PAGE_MARGIN_X, PAGE_MARGIN_X + CARD_WIDTH, PAGE_MARGIN_X + (2 * CARD_WIDTH)]
     y_positions = [
         PAGE_MARGIN_Y,
@@ -112,10 +116,14 @@ def _draw_regular_page_cut_lines(canvas: Canvas) -> None:
     ]
 
     for x in x_positions:
-        canvas.line(x, PAGE_MARGIN_Y, x, PAGE_MARGIN_Y + (4 * CARD_HEIGHT))
+        canvas.line(x, bottom, x, top)
+        canvas.line(x, 0, x, bottom)
+        canvas.line(x, top, x, PAGE_HEIGHT)
 
     for y in y_positions:
-        canvas.line(PAGE_MARGIN_X, y, PAGE_MARGIN_X + (2 * CARD_WIDTH), y)
+        canvas.line(left, y, right, y)
+        canvas.line(0, y, left, y)
+        canvas.line(right, y, PAGE_WIDTH, y)
 
 
 def _draw_first_page_cut_lines(canvas: Canvas) -> None:
@@ -125,20 +133,31 @@ def _draw_first_page_cut_lines(canvas: Canvas) -> None:
     feature_bottom = feature_top - FEATURE_CARD_HEIGHT
 
     story_left = PAGE_MARGIN_X
+    story_middle = PAGE_MARGIN_X + CARD_WIDTH
     story_right = PAGE_MARGIN_X + (2 * CARD_WIDTH)
     story_bottom = feature_bottom - (3 * CARD_HEIGHT)
 
     for x in (feature_left, feature_right):
         canvas.line(x, feature_bottom, x, feature_top)
+        canvas.line(x, feature_top, x, PAGE_HEIGHT)
 
-    for x in (story_left, story_left + CARD_WIDTH, story_right):
+    for x in (story_left, story_middle, story_right):
         canvas.line(x, story_bottom, x, feature_bottom)
+        canvas.line(x, 0, x, story_bottom)
 
+    canvas.line(0, feature_top, feature_left, feature_top)
     canvas.line(feature_left, feature_top, feature_right, feature_top)
+    canvas.line(feature_right, feature_top, PAGE_WIDTH, feature_top)
+
+    canvas.line(0, feature_bottom, story_left, feature_bottom)
     canvas.line(story_left, feature_bottom, story_right, feature_bottom)
+    canvas.line(story_right, feature_bottom, PAGE_WIDTH, feature_bottom)
+
     for row_index in range(1, 4):
         y = feature_bottom - (row_index * CARD_HEIGHT)
+        canvas.line(0, y, story_left, y)
         canvas.line(story_left, y, story_right, y)
+        canvas.line(story_right, y, PAGE_WIDTH, y)
 
 
 def _draw_card(
