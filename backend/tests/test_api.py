@@ -52,6 +52,22 @@ def test_analyze_csv_returns_counts_and_detected_columns() -> None:
     ]
 
 
+def test_analyze_csv_accepts_semicolon_windows_export() -> None:
+    csv_content = (
+        "Type de ticket;Clé de ticket;Résumé;Champs personnalisés (Story Points);Clé parent;Parent summary\n"
+        "Story;PROJ-1;Première story;3;FEAT-1;Première feature\n"
+    ).encode("cp1252")
+
+    response = client.post(
+        "/api/csv/analyze",
+        files={"file": ("jira.csv", csv_content, "text/csv")},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["ticket_count"] == 1
+    assert response.json()["columns"]["issue_key"] == "Clé de ticket"
+
+
 def test_generate_summary_returns_generation_counts() -> None:
     response = client.post(
         "/api/generate/summary",

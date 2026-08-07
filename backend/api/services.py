@@ -5,8 +5,10 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 import pandas as pd
+from pandas.errors import EmptyDataError, ParserError
 
 from backend.api.schemas import AnalyzeResponse, FeatureAnalysis
+from backend.core.exceptions import CsvValidationError
 from backend.core.models import ColorMode, GenerationOptions, GenerationSummary
 from backend.csv.reader import parse_jira_dataframe
 from backend.layout.pagination import paginate_features
@@ -64,4 +66,23 @@ def generate_zip_from_csv_bytes(content: bytes, color_mode: ColorMode) -> tuple[
 
 
 def _read_dataframe(content: bytes) -> pd.DataFrame:
-    return pd.read_csv(BytesIO(content), dtype=str, keep_default_na=False)
+    last_error: Exception | None = None
+    for encoding in ("utf-8-sig", "utf-8", "cp1252", "latin1"):
+        try:
+            return pd.read_csv(
+                BytesIO(content),
+                dtype=str,
+                keep_default_na=False,
+                sep=None,
+                engine="python",
+                encoding=encoding,
+            )
+        except UnicodeDecodeError as error:
+            last_error = error
+        except EmptyDataError as error:
+            raise CsvValidationError("The uploaded CSV file is empty.") from error
+        except ParserError as error:
+            last_error = error
+
+    detail = f" {last_error}" if last_error else ""
+    raise CsvValidationError(f"Unable to read the Jira CSV file.{detail}")

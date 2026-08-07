@@ -20,7 +20,10 @@ def health() -> dict[str, str]:
 
 @app.post("/api/csv/analyze", response_model=AnalyzeResponse)
 async def analyze_csv(file: UploadFile = File(...)) -> AnalyzeResponse:
-    return analyze_csv_bytes(await _read_upload(file))
+    try:
+        return analyze_csv_bytes(await _read_upload(file))
+    except (JiraCardGeneratorError, ValidationError, ValueError) as error:
+        raise HTTPException(status_code=400, detail=str(error)) from error
 
 
 @app.post("/api/generate", response_class=Response)
@@ -28,7 +31,10 @@ async def generate_cards_zip(
     file: UploadFile = File(...),
     color_mode: ColorMode = Form(ColorMode.BLACK_AND_WHITE),
 ) -> Response:
-    zip_content, summary = generate_zip_from_csv_bytes(await _read_upload(file), color_mode)
+    try:
+        zip_content, summary = generate_zip_from_csv_bytes(await _read_upload(file), color_mode)
+    except (JiraCardGeneratorError, ValidationError, ValueError) as error:
+        raise HTTPException(status_code=400, detail=str(error)) from error
     headers = {
         "Content-Disposition": 'attachment; filename="jira-cards.zip"',
         "X-Feature-Count": str(summary.feature_count),
@@ -45,8 +51,11 @@ async def generate_cards_summary(
     file: UploadFile = File(...),
     color_mode: ColorMode = Form(ColorMode.BLACK_AND_WHITE),
 ) -> GenerateResponse:
-    _, summary = generate_zip_from_csv_bytes(await _read_upload(file), color_mode)
-    return GenerateResponse(color_mode=color_mode, **summary.model_dump())
+    try:
+        _, summary = generate_zip_from_csv_bytes(await _read_upload(file), color_mode)
+        return GenerateResponse(color_mode=color_mode, **summary.model_dump())
+    except (JiraCardGeneratorError, ValidationError, ValueError) as error:
+        raise HTTPException(status_code=400, detail=str(error)) from error
 
 
 async def _read_upload(file: UploadFile) -> bytes:
@@ -59,4 +68,3 @@ async def _read_upload(file: UploadFile) -> bytes:
         raise
     except (JiraCardGeneratorError, ValidationError, ValueError) as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
-
