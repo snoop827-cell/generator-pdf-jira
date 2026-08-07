@@ -24,6 +24,8 @@ from backend.pdf.constants import (
     PAGE_MARGIN_X,
     PAGE_MARGIN_Y,
     PAGE_WIDTH,
+    STORY_POINTS_CIRCLE_RADIUS,
+    STORY_POINTS_CIRCLE_STROKE_WIDTH,
     TEMPLATE_HEIGHT,
     TEMPLATE_WIDTH,
     USER_STORY_INNER_MARGIN,
@@ -187,15 +189,18 @@ def _draw_user_story_template(canvas: Canvas, card: PrintableCard, x: float, y: 
     title_font_size = 15
     summary_font_size = 12
     feature_font_size = 12
-    story_points_font_size = 40
+    story_points_font_size = 28
+    story_points_circle_radius = STORY_POINTS_CIRCLE_RADIUS
 
     header_top = content_top - _scale_y(3)
     title_summary_gap = (5 * 2.8346456693) * (2 / 3)
     summary_top = header_top - title_font_size - title_summary_gap
     feature_baseline = content_bottom + feature_font_size * 0.15
-    points_baseline = feature_baseline + feature_font_size + _scale_y(24)
+    points_center_x = content_right - story_points_circle_radius
+    points_center_y = content_bottom + story_points_circle_radius
+    points_baseline = points_center_y - (story_points_font_size * 0.35)
     feature_text_x = content_left
-    feature_text_width = content_right - feature_text_x
+    feature_text_width = max(1, points_center_x - story_points_circle_radius - _scale_x(12) - feature_text_x)
 
     canvas.setFillColor(colors.black)
     header = card.key
@@ -207,7 +212,7 @@ def _draw_user_story_template(canvas: Canvas, card: PrintableCard, x: float, y: 
         content_left,
         summary_top,
         content_width,
-        summary_top - (points_baseline + _scale_y(8)),
+        summary_top - (points_center_y + story_points_circle_radius + _scale_y(8)),
         FONT_BOLD,
         summary_font_size,
         8,
@@ -215,9 +220,13 @@ def _draw_user_story_template(canvas: Canvas, card: PrintableCard, x: float, y: 
     )
 
     if card.story_points is not None:
+        canvas.setStrokeColor(colors.black)
+        canvas.setLineWidth(STORY_POINTS_CIRCLE_STROKE_WIDTH)
+        canvas.circle(points_center_x, points_center_y, story_points_circle_radius, stroke=1, fill=0)
+        canvas.setFillColor(colors.black)
         canvas.setFont(FONT_BOLD, story_points_font_size)
         story_points = _format_story_points(card.story_points)
-        canvas.drawRightString(content_right, points_baseline, story_points)
+        canvas.drawCentredString(points_center_x, points_baseline, story_points)
 
     canvas.setFillColor(colors.black)
     _draw_fitted_text(
