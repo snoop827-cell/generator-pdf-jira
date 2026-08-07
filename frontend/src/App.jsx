@@ -27,7 +27,7 @@ export default function App() {
 
   const currentScreen = useMemo(() => {
     if (result) {
-      return 4;
+      return 3;
     }
     if (isGenerating) {
       return 3;
@@ -140,7 +140,7 @@ export default function App() {
           <h1>Cartes Jira</h1>
           <p className="lead">Génération de cartes imprimables depuis un export CSV Jira.</p>
         </div>
-        <span className="status-pill">Étape {currentScreen}/4</span>
+        <span className="status-pill">Étape {currentScreen}/3</span>
       </header>
 
       {error ? <div className="alert-box">{error}</div> : null}
@@ -180,11 +180,8 @@ export default function App() {
         ) : null}
 
         {currentScreen === 3 ? (
-          <ProgressScreen completedSteps={completedSteps} />
-        ) : null}
-
-        {currentScreen === 4 ? (
-          <ResultScreen
+          <ProgressScreen
+            completedSteps={completedSteps}
             result={result}
             onReset={() => {
               setFile(null);
@@ -477,13 +474,13 @@ function ZipNameModal({ zipName, onChange, onClose, onGenerate }) {
   );
 }
 
-function ProgressScreen({ completedSteps }) {
+function ProgressScreen({ completedSteps, result, onReset }) {
   return (
     <div className="stack">
       <div className="section-heading">
         <div>
           <h2>Génération</h2>
-          <p className="muted">Préparation de l'archive ZIP.</p>
+          <p className="muted">{result ? 'Archive prête.' : "Préparation de l'archive ZIP."}</p>
         </div>
       </div>
       <div className="progress-list">
@@ -494,43 +491,17 @@ function ProgressScreen({ completedSteps }) {
           </div>
         ))}
       </div>
-    </div>
-  );
-}
 
-function ResultScreen({ result, onReset }) {
-  return (
-    <div className="stack">
-      <div className="section-heading">
-        <div>
-          <h2>Archive prête</h2>
-          <p className="muted">Les PDF sont regroupés dans un fichier ZIP.</p>
+      {result ? (
+        <div className="action-row">
+          <a className="button" href={result.downloadUrl} download={result.fileName}>
+            Télécharger le ZIP
+          </a>
+          <button className="secondary" type="button" onClick={onReset}>
+            Nouvelle génération
+          </button>
         </div>
-      </div>
-
-      <div className="info-grid">
-        <InfoCard label="Cartes" value={result.cardCount} />
-        <InfoCard label="Pages" value={result.pageCount} />
-        <InfoCard label="PDF" value={result.pdfCount} />
-      </div>
-
-      <div className="action-row">
-        <a className="button" href={result.downloadUrl} download={result.fileName}>
-          Télécharger le ZIP
-        </a>
-        <button className="secondary" type="button" onClick={onReset}>
-          Nouvelle génération
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function InfoCard({ label, value }) {
-  return (
-    <div className="info-card">
-      <span>{label}</span>
-      <strong>{value}</strong>
+      ) : null}
     </div>
   );
 }
