@@ -69,6 +69,13 @@ button:hover,
   transform: translateY(-1px);
 }
 
+button:disabled,
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+}
+
 button.secondary,
 .button.secondary {
   border-color: rgba(148, 163, 184, 0.24);

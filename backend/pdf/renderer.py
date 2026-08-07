@@ -108,7 +108,7 @@ def _draw_horizontal_crop_mark(canvas: Canvas, grid_x: float, y: float, directio
 
 
 def _draw_card(canvas: Canvas, card: PrintableCard, x: float, y: float, options: GenerationOptions) -> None:
-    border_color = color_for_feature(card.feature_key)
+    border_color = color_for_feature(card.feature_key, options.color_variant)
     padding = CARD_PADDING
 
     canvas.saveState()

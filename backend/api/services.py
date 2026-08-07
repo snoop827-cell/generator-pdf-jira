@@ -18,7 +18,7 @@ from backend.services.archive import create_zip_archive
 from backend.services.grouping import group_stories_by_feature
 
 
-def analyze_csv_bytes(content: bytes) -> AnalyzeResponse:
+def analyze_csv_bytes(content: bytes, color_variant: int = 0) -> AnalyzeResponse:
     dataframe = _read_dataframe(content)
     stories, mapping = parse_jira_dataframe(dataframe)
     features = group_stories_by_feature(stories)
@@ -27,6 +27,7 @@ def analyze_csv_bytes(content: bytes) -> AnalyzeResponse:
     return AnalyzeResponse(
         ticket_count=len(stories),
         feature_count=len(features),
+        color_variant=color_variant,
         columns={
             "issue_type": mapping.issue_type,
             "issue_key": mapping.issue_key,
@@ -41,7 +42,7 @@ def analyze_csv_bytes(content: bytes) -> AnalyzeResponse:
                 key=print_job.feature.key,
                 summary=print_job.feature.summary,
                 label=print_job.feature.label,
-                color=color_for_feature(print_job.feature.key),
+                color=color_for_feature(print_job.feature.key, color_variant),
                 user_story_count=len(print_job.feature.stories),
                 page_count=print_job.page_count,
             )
@@ -50,7 +51,11 @@ def analyze_csv_bytes(content: bytes) -> AnalyzeResponse:
     )
 
 
-def generate_zip_from_csv_bytes(content: bytes, color_mode: ColorMode) -> tuple[bytes, GenerationSummary]:
+def generate_zip_from_csv_bytes(
+    content: bytes,
+    color_mode: ColorMode,
+    color_variant: int = 0,
+) -> tuple[bytes, GenerationSummary]:
     dataframe = _read_dataframe(content)
     stories, _ = parse_jira_dataframe(dataframe)
     features = group_stories_by_feature(stories)
@@ -61,7 +66,7 @@ def generate_zip_from_csv_bytes(content: bytes, color_mode: ColorMode) -> tuple[
         pdf_paths, summary = render_feature_pdfs(
             print_jobs,
             output_dir / "pdf",
-            GenerationOptions(color_mode=color_mode),
+            GenerationOptions(color_mode=color_mode, color_variant=color_variant),
         )
         zip_path = create_zip_archive(pdf_paths, output_dir / "jira-cards.zip")
         return zip_path.read_bytes(), summary

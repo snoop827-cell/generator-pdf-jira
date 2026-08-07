@@ -20,14 +20,15 @@ PALETTE: tuple[str, ...] = (
 )
 
 
-def color_for_feature(feature_key: str) -> str:
+def color_for_feature(feature_key: str, variant: int = 0) -> str:
     """Return a stable, deterministic color for a Jira Feature key."""
+    color_variant = max(0, variant)
     normalized_key = feature_key.strip().upper()
     numeric_suffix = re.search(r"(\d+)$", normalized_key)
     if numeric_suffix:
-        palette_index = (int(numeric_suffix.group(1)) - 1) % len(PALETTE)
+        palette_index = (int(numeric_suffix.group(1)) - 1 + color_variant) % len(PALETTE)
         return PALETTE[palette_index]
 
     digest = hashlib.sha256(normalized_key.encode("utf-8")).hexdigest()
-    palette_index = int(digest[:8], 16) % len(PALETTE)
+    palette_index = (int(digest[:8], 16) + color_variant) % len(PALETTE)
     return PALETTE[palette_index]

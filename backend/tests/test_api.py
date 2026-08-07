@@ -32,6 +32,7 @@ def test_analyze_csv_returns_counts_and_detected_columns() -> None:
     assert response.status_code == 200
     assert response.json()["ticket_count"] == 3
     assert response.json()["feature_count"] == 2
+    assert response.json()["color_variant"] == 0
     assert response.json()["columns"]["parent_key"] == "Clé parent"
     assert response.json()["features"] == ["FEAT-1 - First feature", "FEAT-2 - Second feature"]
     assert response.json()["feature_details"] == [
@@ -68,6 +69,18 @@ def test_analyze_csv_accepts_semicolon_windows_export() -> None:
     assert response.status_code == 200
     assert response.json()["ticket_count"] == 1
     assert response.json()["columns"]["issue_key"] == "Clé de ticket"
+
+
+def test_analyze_csv_accepts_color_variant() -> None:
+    response = client.post(
+        "/api/csv/analyze",
+        files={"file": ("jira.csv", CSV_CONTENT, "text/csv")},
+        data={"color_variant": "1"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["color_variant"] == 1
+    assert response.json()["feature_details"][0]["color"] == "#E69F00"
 
 
 def test_generate_summary_returns_generation_counts() -> None:

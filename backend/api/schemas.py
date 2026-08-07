@@ -17,6 +17,7 @@ class FeatureAnalysis(BaseModel):
 class AnalyzeResponse(BaseModel):
     ticket_count: int = Field(ge=0)
     feature_count: int = Field(ge=0)
+    color_variant: int = Field(ge=0)
     columns: dict[str, str]
     features: list[str]
     feature_details: list[FeatureAnalysis]

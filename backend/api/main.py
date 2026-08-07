@@ -19,9 +19,12 @@ def health() -> dict[str, str]:
 
 
 @app.post("/api/csv/analyze", response_model=AnalyzeResponse)
-async def analyze_csv(file: UploadFile = File(...)) -> AnalyzeResponse:
+async def analyze_csv(
+    file: UploadFile = File(...),
+    color_variant: int = Form(0),
+) -> AnalyzeResponse:
     try:
-        return analyze_csv_bytes(await _read_upload(file))
+        return analyze_csv_bytes(await _read_upload(file), color_variant)
     except (JiraCardGeneratorError, ValidationError, ValueError) as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
@@ -30,9 +33,10 @@ async def analyze_csv(file: UploadFile = File(...)) -> AnalyzeResponse:
 async def generate_cards_zip(
     file: UploadFile = File(...),
     color_mode: ColorMode = Form(ColorMode.BLACK_AND_WHITE),
+    color_variant: int = Form(0),
 ) -> Response:
     try:
-        zip_content, summary = generate_zip_from_csv_bytes(await _read_upload(file), color_mode)
+        zip_content, summary = generate_zip_from_csv_bytes(await _read_upload(file), color_mode, color_variant)
     except (JiraCardGeneratorError, ValidationError, ValueError) as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
     headers = {
@@ -50,9 +54,10 @@ async def generate_cards_zip(
 async def generate_cards_summary(
     file: UploadFile = File(...),
     color_mode: ColorMode = Form(ColorMode.BLACK_AND_WHITE),
+    color_variant: int = Form(0),
 ) -> GenerateResponse:
     try:
-        _, summary = generate_zip_from_csv_bytes(await _read_upload(file), color_mode)
+        _, summary = generate_zip_from_csv_bytes(await _read_upload(file), color_mode, color_variant)
         return GenerateResponse(color_mode=color_mode, **summary.model_dump())
     except (JiraCardGeneratorError, ValidationError, ValueError) as error:
         raise HTTPException(status_code=400, detail=str(error)) from error

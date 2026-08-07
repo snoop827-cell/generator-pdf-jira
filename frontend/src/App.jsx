@@ -17,6 +17,7 @@ export default function App() {
   const [isDragging, setIsDragging] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [colorVariant, setColorVariant] = useState(0);
   const [completedSteps, setCompletedSteps] = useState([]);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
@@ -34,7 +35,7 @@ export default function App() {
     return 1;
   }, [analysis, isGenerating, result]);
 
-  async function analyzeSelectedFile(selectedFile) {
+  async function analyzeSelectedFile(selectedFile, nextColorVariant = colorVariant) {
     setFile(selectedFile);
     setAnalysis(null);
     setResult(null);
@@ -44,11 +45,13 @@ export default function App() {
     try {
       const formData = new FormData();
       formData.append('file', selectedFile);
+      formData.append('color_variant', String(nextColorVariant));
       const response = await fetch(`${apiBase}/api/csv/analyze`, {
         method: 'POST',
         body: formData
       });
       const payload = await readJsonResponse(response);
+      setColorVariant(payload.color_variant ?? nextColorVariant);
       setAnalysis(payload);
     } catch (apiError) {
       setError(apiError.message);
@@ -75,6 +78,7 @@ export default function App() {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('color_mode', colorMode);
+      formData.append('color_variant', String(colorVariant));
 
       const response = await fetch(`${apiBase}/api/generate`, {
         method: 'POST',
@@ -113,6 +117,15 @@ export default function App() {
     }
   }
 
+  function regenerateColors() {
+    if (!file || isAnalyzing || isGenerating) {
+      return;
+    }
+    const nextColorVariant = colorVariant + 1;
+    setColorVariant(nextColorVariant);
+    analyzeSelectedFile(file, nextColorVariant);
+  }
+
   return (
     <main className="app-shell">
       <header className="topbar">
@@ -148,8 +161,12 @@ export default function App() {
               setFile(null);
               setAnalysis(null);
               setResult(null);
+              setColorVariant(0);
             }}
+            onRegenerateColors={regenerateColors}
             onSetColorMode={setColorMode}
+            isAnalyzing={isAnalyzing}
+            isGenerating={isGenerating}
           />
         ) : null}
 
@@ -165,6 +182,7 @@ export default function App() {
               setAnalysis(null);
               setResult(null);
               setCompletedSteps([]);
+              setColorVariant(0);
             }}
           />
         ) : null}
@@ -227,7 +245,10 @@ function SummaryScreen({
   analysis,
   colorMode,
   file,
+  isAnalyzing,
+  isGenerating,
   onGenerate,
+  onRegenerateColors,
   onReset,
   onSetColorMode
 }) {
@@ -311,6 +332,14 @@ function SummaryScreen({
       </div>
 
       <div className="action-row">
+        <button
+          className="secondary"
+          disabled={isAnalyzing || isGenerating}
+          type="button"
+          onClick={onRegenerateColors}
+        >
+          Autres couleurs
+        </button>
         <button type="button" onClick={onGenerate}>Generer</button>
       </div>
     </div>
