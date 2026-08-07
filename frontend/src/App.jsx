@@ -16,6 +16,7 @@ export default function App() {
   const [colorMode, setColorMode] = useState('black_and_white');
   const [zipName, setZipName] = useState('jira-cards');
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [isZipNameOpen, setIsZipNameOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -69,6 +70,7 @@ export default function App() {
       return;
     }
 
+    setIsZipNameOpen(false);
     setError('');
     setResult(null);
     setIsGenerating(true);
@@ -161,20 +163,19 @@ export default function App() {
             analysis={analysis}
             colorMode={colorMode}
             file={file}
-            onGenerate={generateZip}
             onReset={() => {
               setFile(null);
               setAnalysis(null);
               setResult(null);
               setColorVariant(0);
               setZipName('jira-cards');
+              setIsZipNameOpen(false);
             }}
             onRegenerateColors={regenerateColors}
             onSetColorMode={setColorMode}
-            onSetZipName={setZipName}
             isAnalyzing={isAnalyzing}
             isGenerating={isGenerating}
-            zipName={zipName}
+            onOpenZipName={() => setIsZipNameOpen(true)}
           />
         ) : null}
 
@@ -192,12 +193,21 @@ export default function App() {
               setCompletedSteps([]);
               setColorVariant(0);
               setZipName('jira-cards');
+              setIsZipNameOpen(false);
             }}
           />
         ) : null}
       </section>
 
       {isHelpOpen ? <HelpModal onClose={() => setIsHelpOpen(false)} /> : null}
+      {isZipNameOpen ? (
+        <ZipNameModal
+          zipName={zipName}
+          onChange={setZipName}
+          onClose={() => setIsZipNameOpen(false)}
+          onGenerate={generateZip}
+        />
+      ) : null}
     </main>
   );
 
@@ -329,12 +339,10 @@ function SummaryScreen({
   file,
   isAnalyzing,
   isGenerating,
-  onGenerate,
+  onOpenZipName,
   onRegenerateColors,
   onReset,
-  onSetColorMode,
-  onSetZipName,
-  zipName
+  onSetColorMode
 }) {
   const featureDetails = Array.isArray(analysis.feature_details)
     ? analysis.feature_details
@@ -415,16 +423,6 @@ function SummaryScreen({
         ))}
       </div>
 
-      <label className="zip-name-field">
-        <span>Nom du ZIP</span>
-        <input
-          type="text"
-          value={zipName}
-          onChange={(event) => onSetZipName(event.target.value)}
-          placeholder="jira-cards"
-        />
-      </label>
-
       <div className="action-row">
         <button
           className="secondary"
@@ -434,7 +432,46 @@ function SummaryScreen({
         >
           Autres couleurs
         </button>
-        <button type="button" onClick={onGenerate}>Générer</button>
+        <button type="button" onClick={onOpenZipName}>Générer</button>
+      </div>
+    </div>
+  );
+}
+
+function ZipNameModal({ zipName, onChange, onClose, onGenerate }) {
+  return (
+    <div
+      aria-labelledby="zip-name-modal-title"
+      aria-modal="true"
+      className="modal-backdrop"
+      role="dialog"
+    >
+      <div className="modal-panel modal-panel-small">
+        <div className="modal-header">
+          <div>
+            <p className="eyebrow">Archive ZIP</p>
+            <h2 id="zip-name-modal-title">Nom du fichier téléchargé</h2>
+          </div>
+          <button className="secondary icon-button" type="button" aria-label="Fermer" onClick={onClose}>
+            X
+          </button>
+        </div>
+
+        <label className="zip-name-field">
+          <span>Nom du ZIP</span>
+          <input
+            autoFocus
+            type="text"
+            value={zipName}
+            onChange={(event) => onChange(event.target.value)}
+            placeholder="jira-cards"
+          />
+        </label>
+
+        <div className="modal-actions">
+          <button className="secondary" type="button" onClick={onClose}>Annuler</button>
+          <button type="button" onClick={onGenerate}>Générer</button>
+        </div>
       </div>
     </div>
   );

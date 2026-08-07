@@ -243,6 +243,10 @@ small {
   padding: 24px;
 }
 
+.modal-panel-small {
+  width: min(520px, 100%);
+}
+
 .modal-header,
 .modal-actions {
   display: flex;
