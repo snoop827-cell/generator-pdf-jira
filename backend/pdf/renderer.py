@@ -195,6 +195,7 @@ def _draw_user_story_template(canvas: Canvas, card: PrintableCard, x: float, y: 
     header_top = content_top - _scale_y(3)
     title_summary_gap = (5 * 2.8346456693) * (2 / 3)
     summary_top = header_top - title_font_size - title_summary_gap
+    summary_line_height = summary_font_size * 1.12
     feature_baseline = content_bottom + feature_font_size * 0.15
     points_center_x = content_right - story_points_circle_radius
     points_center_y = content_bottom + story_points_circle_radius
@@ -212,7 +213,7 @@ def _draw_user_story_template(canvas: Canvas, card: PrintableCard, x: float, y: 
         content_left,
         summary_top,
         content_width,
-        summary_top - (points_center_y + story_points_circle_radius + _scale_y(8)),
+        summary_line_height * 4,
         FONT_BOLD,
         summary_font_size,
         8,
