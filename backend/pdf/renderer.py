@@ -15,9 +15,10 @@ from backend.pdf.constants import (
     CARD_PADDING,
     CARD_PADDING_WITH_BORDER,
     CARD_WIDTH,
-    CROP_MARK_LENGTH,
-    CROP_MARK_OFFSET,
     CROP_MARK_WIDTH,
+    FEATURE_CARD_HEIGHT,
+    FEATURE_CARD_WIDTH,
+    FIRST_PAGE_MARGIN_Y,
     FONT_BOLD,
     FONT_REGULAR,
     PAGE_HEIGHT,
@@ -47,17 +48,33 @@ def render_feature_pdf(
     canvas.setAuthor("jira-card-generator")
 
     for page in print_job.pages:
-        _draw_crop_marks(canvas)
+        _draw_crop_marks(canvas, page.number)
         for index, card in enumerate(page.cards):
-            x, y = _card_position(index)
-            _draw_card(canvas, card, x, y, generation_options)
+            x, y = _card_position(page.number, index)
+            width, height = _card_dimensions(card)
+            _draw_card(canvas, card, x, y, width, height, generation_options)
         canvas.showPage()
 
     canvas.save()
     return output
 
 
-def _card_position(index: int) -> tuple[float, float]:
+def _card_position(page_number: int, index: int) -> tuple[float, float]:
+    if page_number == 1 and index == 0:
+        return (
+            (PAGE_WIDTH - FEATURE_CARD_WIDTH) / 2,
+            PAGE_HEIGHT - FIRST_PAGE_MARGIN_Y - FEATURE_CARD_HEIGHT,
+        )
+
+    if page_number == 1:
+        story_index = index - 1
+        column = story_index % 2
+        row = story_index // 2
+        x = PAGE_MARGIN_X + (column * CARD_WIDTH)
+        feature_y = PAGE_HEIGHT - FIRST_PAGE_MARGIN_Y - FEATURE_CARD_HEIGHT
+        y = feature_y - ((row + 1) * CARD_HEIGHT)
+        return x, y
+
     column = index % 2
     row = index // 2
     x = PAGE_MARGIN_X + (column * CARD_WIDTH)
@@ -65,11 +82,26 @@ def _card_position(index: int) -> tuple[float, float]:
     return x, y
 
 
-def _draw_crop_marks(canvas: Canvas) -> None:
+def _card_dimensions(card: PrintableCard) -> tuple[float, float]:
+    if card.kind == CardKind.FEATURE:
+        return FEATURE_CARD_WIDTH, FEATURE_CARD_HEIGHT
+    return CARD_WIDTH, CARD_HEIGHT
+
+
+def _draw_crop_marks(canvas: Canvas, page_number: int) -> None:
     canvas.saveState()
     canvas.setStrokeColor(colors.black)
     canvas.setLineWidth(CROP_MARK_WIDTH)
 
+    if page_number == 1:
+        _draw_first_page_cut_lines(canvas)
+    else:
+        _draw_regular_page_cut_lines(canvas)
+
+    canvas.restoreState()
+
+
+def _draw_regular_page_cut_lines(canvas: Canvas) -> None:
     x_positions = [PAGE_MARGIN_X, PAGE_MARGIN_X + CARD_WIDTH, PAGE_MARGIN_X + (2 * CARD_WIDTH)]
     y_positions = [
         PAGE_MARGIN_Y,
@@ -79,35 +111,45 @@ def _draw_crop_marks(canvas: Canvas) -> None:
         PAGE_MARGIN_Y + (4 * CARD_HEIGHT),
     ]
 
-    top = PAGE_MARGIN_Y + (4 * CARD_HEIGHT)
-    bottom = PAGE_MARGIN_Y
-    left = PAGE_MARGIN_X
-    right = PAGE_MARGIN_X + (2 * CARD_WIDTH)
-
     for x in x_positions:
-        _draw_vertical_crop_mark(canvas, x, bottom, -1)
-        _draw_vertical_crop_mark(canvas, x, top, 1)
+        canvas.line(x, PAGE_MARGIN_Y, x, PAGE_MARGIN_Y + (4 * CARD_HEIGHT))
 
     for y in y_positions:
-        _draw_horizontal_crop_mark(canvas, left, y, -1)
-        _draw_horizontal_crop_mark(canvas, right, y, 1)
-
-    canvas.restoreState()
+        canvas.line(PAGE_MARGIN_X, y, PAGE_MARGIN_X + (2 * CARD_WIDTH), y)
 
 
-def _draw_vertical_crop_mark(canvas: Canvas, x: float, grid_y: float, direction: int) -> None:
-    start_y = grid_y + (direction * CROP_MARK_OFFSET)
-    end_y = start_y + (direction * CROP_MARK_LENGTH)
-    canvas.line(x, start_y, x, end_y)
+def _draw_first_page_cut_lines(canvas: Canvas) -> None:
+    feature_left = (PAGE_WIDTH - FEATURE_CARD_WIDTH) / 2
+    feature_right = feature_left + FEATURE_CARD_WIDTH
+    feature_top = PAGE_HEIGHT - FIRST_PAGE_MARGIN_Y
+    feature_bottom = feature_top - FEATURE_CARD_HEIGHT
+
+    story_left = PAGE_MARGIN_X
+    story_right = PAGE_MARGIN_X + (2 * CARD_WIDTH)
+    story_bottom = feature_bottom - (3 * CARD_HEIGHT)
+
+    for x in (feature_left, feature_right):
+        canvas.line(x, feature_bottom, x, feature_top)
+
+    for x in (story_left, story_left + CARD_WIDTH, story_right):
+        canvas.line(x, story_bottom, x, feature_bottom)
+
+    canvas.line(feature_left, feature_top, feature_right, feature_top)
+    canvas.line(story_left, feature_bottom, story_right, feature_bottom)
+    for row_index in range(1, 4):
+        y = feature_bottom - (row_index * CARD_HEIGHT)
+        canvas.line(story_left, y, story_right, y)
 
 
-def _draw_horizontal_crop_mark(canvas: Canvas, grid_x: float, y: float, direction: int) -> None:
-    start_x = grid_x + (direction * CROP_MARK_OFFSET)
-    end_x = start_x + (direction * CROP_MARK_LENGTH)
-    canvas.line(start_x, y, end_x, y)
-
-
-def _draw_card(canvas: Canvas, card: PrintableCard, x: float, y: float, options: GenerationOptions) -> None:
+def _draw_card(
+    canvas: Canvas,
+    card: PrintableCard,
+    x: float,
+    y: float,
+    width: float,
+    height: float,
+    options: GenerationOptions,
+) -> None:
     border_color = options.feature_colors.get(card.feature_key) or color_for_feature(
         card.feature_key,
         options.color_variant,
@@ -115,6 +157,13 @@ def _draw_card(canvas: Canvas, card: PrintableCard, x: float, y: float, options:
     padding = CARD_PADDING
 
     canvas.saveState()
+    if card.kind == CardKind.FEATURE:
+        fill_color = colors.HexColor(border_color) if options.color_mode == ColorMode.COLOR else colors.black
+        canvas.setFillColor(fill_color)
+        canvas.setFillAlpha(0.16 if options.color_mode == ColorMode.COLOR else 0.08)
+        canvas.rect(x, y, width, height, stroke=0, fill=1)
+        canvas.setFillAlpha(1)
+
     if options.color_mode == ColorMode.COLOR:
         canvas.setStrokeColor(colors.HexColor(border_color))
         canvas.setLineWidth(CARD_BORDER_WIDTH)
@@ -122,8 +171,8 @@ def _draw_card(canvas: Canvas, card: PrintableCard, x: float, y: float, options:
         canvas.rect(
             x + inset,
             y + inset,
-            CARD_WIDTH - CARD_BORDER_WIDTH,
-            CARD_HEIGHT - CARD_BORDER_WIDTH,
+            width - CARD_BORDER_WIDTH,
+            height - CARD_BORDER_WIDTH,
             stroke=1,
             fill=0,
         )
@@ -134,28 +183,32 @@ def _draw_card(canvas: Canvas, card: PrintableCard, x: float, y: float, options:
         canvas.rect(
             x,
             y,
-            CARD_WIDTH,
-            CARD_HEIGHT,
+            width,
+            height,
             stroke=1,
             fill=0,
         )
 
-    content_x = x + padding
-    content_y = y + CARD_HEIGHT - padding
-    content_width = CARD_WIDTH - (2 * padding)
-
     if card.kind == CardKind.FEATURE:
-        _draw_feature_template(canvas, card, x, y, padding)
+        _draw_feature_template(canvas, card, x, y, width, height, padding)
     else:
         _draw_user_story_template(canvas, card, x, y, padding)
     canvas.restoreState()
 
 
-def _draw_feature_template(canvas: Canvas, card: PrintableCard, x: float, y: float, padding: float) -> None:
+def _draw_feature_template(
+    canvas: Canvas,
+    card: PrintableCard,
+    x: float,
+    y: float,
+    width: float,
+    height: float,
+    padding: float,
+) -> None:
     inner_margin = max(padding, USER_STORY_INNER_MARGIN)
     content_left = x + inner_margin
-    content_right = x + CARD_WIDTH - inner_margin
-    content_top = y + CARD_HEIGHT - inner_margin
+    content_right = x + width - inner_margin
+    content_top = y + height - inner_margin
     content_bottom = y + inner_margin
     content_width = content_right - content_left
 

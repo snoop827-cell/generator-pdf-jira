@@ -9,7 +9,7 @@ from backend.core.models import Feature, UserStory
 
 
 CARDS_PER_A4_PAGE = 8
-USER_STORIES_ON_FIRST_PAGE = 7
+USER_STORIES_ON_FIRST_PAGE = 6
 
 
 class CardKind(StrEnum):
@@ -121,7 +121,8 @@ def _validate_pages(feature: Feature, pages: list[PrintablePage]) -> None:
         raise CsvValidationError(f"Pagination lost or reordered tickets for Feature {feature.key}.")
 
     for page in pages:
-        if page.card_count > CARDS_PER_A4_PAGE:
-            raise CsvValidationError(f"Page {page.number} contains more than 8 cards.")
+        max_cards = USER_STORIES_ON_FIRST_PAGE + 1 if page.number == 1 else CARDS_PER_A4_PAGE
+        if page.card_count > max_cards:
+            raise CsvValidationError(f"Page {page.number} contains more than {max_cards} cards.")
         if not page.cards:
             raise CsvValidationError(f"Page {page.number} is empty.")

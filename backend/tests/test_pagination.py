@@ -34,29 +34,29 @@ def test_paginate_feature_rejects_empty_feature() -> None:
         paginate_feature(make_feature(0))
 
 
-def test_first_page_contains_feature_card_and_seven_user_stories() -> None:
-    print_job = paginate_feature(make_feature(7))
+def test_first_page_contains_feature_card_and_six_user_stories() -> None:
+    print_job = paginate_feature(make_feature(6))
 
     assert print_job.page_count == 1
-    assert print_job.card_count == 8
+    assert print_job.card_count == 7
     assert print_job.pages[0].cards[0].kind == CardKind.FEATURE
-    assert [card.kind for card in print_job.pages[0].cards[1:]] == [CardKind.USER_STORY] * 7
+    assert [card.kind for card in print_job.pages[0].cards[1:]] == [CardKind.USER_STORY] * 6
 
 
-def test_eighth_user_story_goes_to_second_page() -> None:
-    print_job = paginate_feature(make_feature(8))
+def test_seventh_user_story_goes_to_second_page() -> None:
+    print_job = paginate_feature(make_feature(7))
 
     assert print_job.page_count == 2
-    assert [page.card_count for page in print_job.pages] == [8, 1]
-    assert print_job.pages[1].cards[0].key == "PROJ-8"
+    assert [page.card_count for page in print_job.pages] == [7, 1]
+    assert print_job.pages[1].cards[0].key == "PROJ-7"
     assert print_job.pages[1].cards[0].issue_type == "Story"
 
 
 def test_following_pages_contain_eight_user_stories_maximum() -> None:
     print_job = paginate_feature(make_feature(15))
 
-    assert print_job.page_count == 2
-    assert [page.card_count for page in print_job.pages] == [8, 8]
+    assert print_job.page_count == 3
+    assert [page.card_count for page in print_job.pages] == [7, 8, 1]
     assert all(page.card_count <= CARDS_PER_A4_PAGE for page in print_job.pages)
 
 
