@@ -34,6 +34,9 @@ def _clean_dataframe(dataframe: pd.DataFrame) -> pd.DataFrame:
 def _to_user_stories(dataframe: pd.DataFrame, mapping: JiraColumnMapping) -> list[UserStory]:
     stories: list[UserStory] = []
     for _, row in dataframe.iterrows():
+        if not _has_required_card_fields(row, mapping):
+            continue
+
         story_points = _parse_story_points(row[mapping.story_points])
         stories.append(
             UserStory(
@@ -46,6 +49,18 @@ def _to_user_stories(dataframe: pd.DataFrame, mapping: JiraColumnMapping) -> lis
             )
         )
     return stories
+
+
+def _has_required_card_fields(row: pd.Series, mapping: JiraColumnMapping) -> bool:
+    return all(
+        str(row[column]).strip()
+        for column in (
+            mapping.issue_key,
+            mapping.summary,
+            mapping.parent_key,
+            mapping.parent_summary,
+        )
+    )
 
 
 def _parse_story_points(value: object) -> float | None:
@@ -69,4 +84,3 @@ def _validate_stories(stories: list[UserStory]) -> None:
     if duplicates:
         duplicate_list = ", ".join(sorted(duplicates))
         raise CsvValidationError(f"Duplicate ticket keys found: {duplicate_list}")
-

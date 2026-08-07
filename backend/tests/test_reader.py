@@ -9,19 +9,19 @@ def test_parse_jira_dataframe_cleans_and_maps_rows() -> None:
     dataframe = pd.DataFrame(
         [
             {
-                " Type de ticket ": " Story ",
-                "Clé de ticket": " PROJ-1 ",
-                "Résumé": " My story ",
-                "Champs personnalisés (Story Points)": " 5 ",
-                "Clé parent": " FEAT-1 ",
+                " Issue Type ": " Story ",
+                "Issue Key": " PROJ-1 ",
+                "Summary": " My story ",
+                "Story Points": " 5 ",
+                "Parent Key": " FEAT-1 ",
                 "Parent summary": " Feature summary ",
             },
             {
-                " Type de ticket ": "",
-                "Clé de ticket": "",
-                "Résumé": "",
-                "Champs personnalisés (Story Points)": "",
-                "Clé parent": "",
+                " Issue Type ": "",
+                "Issue Key": "",
+                "Summary": "",
+                "Story Points": "",
+                "Parent Key": "",
                 "Parent summary": "",
             },
         ]
@@ -40,19 +40,19 @@ def test_parse_jira_dataframe_rejects_duplicate_ticket_keys() -> None:
     dataframe = pd.DataFrame(
         [
             {
-                "Type de ticket": "Story",
-                "Clé de ticket": "PROJ-1",
-                "Résumé": "First",
-                "Champs personnalisés (Story Points)": "3",
-                "Clé parent": "FEAT-1",
+                "Issue Type": "Story",
+                "Issue Key": "PROJ-1",
+                "Summary": "First",
+                "Story Points": "3",
+                "Parent Key": "FEAT-1",
                 "Parent summary": "Feature",
             },
             {
-                "Type de ticket": "Story",
-                "Clé de ticket": "PROJ-1",
-                "Résumé": "Second",
-                "Champs personnalisés (Story Points)": "5",
-                "Clé parent": "FEAT-1",
+                "Issue Type": "Story",
+                "Issue Key": "PROJ-1",
+                "Summary": "Second",
+                "Story Points": "5",
+                "Parent Key": "FEAT-1",
                 "Parent summary": "Feature",
             },
         ]
@@ -61,3 +61,30 @@ def test_parse_jira_dataframe_rejects_duplicate_ticket_keys() -> None:
     with pytest.raises(CsvValidationError):
         parse_jira_dataframe(dataframe)
 
+
+def test_parse_jira_dataframe_skips_rows_without_parent_feature() -> None:
+    dataframe = pd.DataFrame(
+        [
+            {
+                "Issue Type": "Feature",
+                "Issue Key": "FEAT-1",
+                "Summary": "Feature row",
+                "Story Points": "",
+                "Parent Key": "",
+                "Parent summary": "",
+            },
+            {
+                "Issue Type": "Story",
+                "Issue Key": "PROJ-1",
+                "Summary": "Story row",
+                "Story Points": "3",
+                "Parent Key": "FEAT-1",
+                "Parent summary": "Feature row",
+            },
+        ]
+    )
+
+    stories, _ = parse_jira_dataframe(dataframe)
+
+    assert len(stories) == 1
+    assert stories[0].key == "PROJ-1"
