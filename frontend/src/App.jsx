@@ -36,9 +36,11 @@ export default function App() {
     return 1;
   }, [analysis, isGenerating, result]);
 
-  async function analyzeSelectedFile(selectedFile, nextColorVariant = colorVariant) {
+  async function analyzeSelectedFile(selectedFile, nextColorVariant = colorVariant, options = {}) {
     setFile(selectedFile);
-    setAnalysis(null);
+    if (!options.keepAnalysis) {
+      setAnalysis(null);
+    }
     setResult(null);
     setError('');
     setIsAnalyzing(true);
@@ -124,7 +126,7 @@ export default function App() {
     }
     const nextColorVariant = colorVariant + 1;
     setColorVariant(nextColorVariant);
-    analyzeSelectedFile(file, nextColorVariant);
+    analyzeSelectedFile(file, nextColorVariant, { keepAnalysis: true });
   }
 
   return (
@@ -133,7 +135,7 @@ export default function App() {
         <div>
           <p className="eyebrow">Portail applications</p>
           <h1>Cartes Jira</h1>
-          <p className="lead">Génération déterministe de cartes imprimables depuis un export CSV Jira.</p>
+          <p className="lead">Génération de cartes imprimables depuis un export CSV Jira.</p>
         </div>
         <span className="status-pill">Étape {currentScreen}/4</span>
       </header>
