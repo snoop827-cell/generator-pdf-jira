@@ -14,6 +14,7 @@ export default function App() {
   const [file, setFile] = useState(null);
   const [analysis, setAnalysis] = useState(null);
   const [colorMode, setColorMode] = useState('black_and_white');
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -147,6 +148,7 @@ export default function App() {
             isDragging={isDragging}
             onDragState={setIsDragging}
             onDrop={handleDrop}
+            onOpenHelp={() => setIsHelpOpen(true)}
             onSelectFile={analyzeSelectedFile}
           />
         ) : null}
@@ -187,6 +189,8 @@ export default function App() {
           />
         ) : null}
       </section>
+
+      {isHelpOpen ? <HelpModal onClose={() => setIsHelpOpen(false)} /> : null}
     </main>
   );
 
@@ -202,6 +206,7 @@ function ImportScreen({
   isDragging,
   onDragState,
   onDrop,
+  onOpenHelp,
   onSelectFile
 }) {
   return (
@@ -211,6 +216,9 @@ function ImportScreen({
           <h2>Importer le CSV</h2>
           <p className="muted">Export Jira au format CSV.</p>
         </div>
+        <button className="secondary" type="button" onClick={onOpenHelp}>
+          Mode operatoire
+        </button>
       </div>
 
       <label
@@ -237,6 +245,73 @@ function ImportScreen({
         <strong>{file ? file.name : 'Deposer le fichier ici'}</strong>
         <small>{isAnalyzing ? 'Analyse en cours...' : 'ou selectionner un fichier'}</small>
       </label>
+    </div>
+  );
+}
+
+function HelpModal({ onClose }) {
+  return (
+    <div
+      aria-labelledby="help-modal-title"
+      aria-modal="true"
+      className="modal-backdrop"
+      role="dialog"
+    >
+      <div className="modal-panel">
+        <div className="modal-header">
+          <div>
+            <p className="eyebrow">Aide</p>
+            <h2 id="help-modal-title">Comment generer vos cartes Jira ?</h2>
+          </div>
+          <button className="secondary icon-button" type="button" aria-label="Fermer" onClick={onClose}>
+            X
+          </button>
+        </div>
+
+        <div className="help-steps">
+          <section>
+            <h3>1. Preparez votre recherche dans Jira</h3>
+            <p>
+              Ouvrez le{' '}
+              <a href="https://bgpn.atlassian.net/issues/?filter=32318" target="_blank" rel="noreferrer">
+                filtre Jira propose
+              </a>
+              , puis adaptez si necessaire les criteres a votre besoin : Espace, Type de ticket,
+              Composant, Sprint...
+            </p>
+          </section>
+
+          <section>
+            <h3>2. Verifiez les colonnes</h3>
+            <p>Affichez au minimum les colonnes suivantes :</p>
+            <p className="help-highlight">Cle de ticket - Resume - Story Point - Parent</p>
+          </section>
+
+          <section>
+            <h3>3. Exportez votre recherche</h3>
+            <p>Dans Jira, selectionnez :</p>
+            <p className="help-highlight">Exporter - CSV (colonnes par defaut)</p>
+            <p>Enregistrez ensuite le fichier .csv sur votre ordinateur.</p>
+          </section>
+
+          <section>
+            <h3>4. Importez le fichier</h3>
+            <p>Dans l'application, selectionnez ou deposez votre fichier CSV dans la zone prevue a cet effet.</p>
+          </section>
+
+          <section>
+            <h3>5. Generez vos cartes</h3>
+            <p>Verifiez le jeu de couleurs propose.</p>
+            <p>Les couleurs ne vous conviennent pas ? Cliquez sur Autres couleurs pour obtenir une nouvelle proposition.</p>
+            <p>Lorsque tout vous convient, cliquez sur Generer.</p>
+            <p className="help-highlight">Vos cartes Jira sont pretes !</p>
+          </section>
+        </div>
+
+        <div className="modal-actions">
+          <button type="button" onClick={onClose}>Compris</button>
+        </div>
+      </div>
     </div>
   );
 }
