@@ -6,7 +6,7 @@ const STEPS = [
   'Lecture CSV',
   'Analyse',
   'Regroupement',
-  'Creation PDF',
+  'Création PDF',
   'Compression ZIP'
 ];
 
@@ -90,7 +90,7 @@ export default function App() {
         throw new Error(await readError(response));
       }
 
-      await markStep('Creation PDF');
+      await markStep('Création PDF');
       const zipBlob = await response.blob();
       await markStep('Compression ZIP');
 
@@ -133,9 +133,9 @@ export default function App() {
         <div>
           <p className="eyebrow">Portail applications</p>
           <h1>Cartes Jira</h1>
-          <p className="lead">Generation deterministe de cartes imprimables depuis un export CSV Jira.</p>
+          <p className="lead">Génération déterministe de cartes imprimables depuis un export CSV Jira.</p>
         </div>
-        <span className="status-pill">Etape {currentScreen}/4</span>
+        <span className="status-pill">Étape {currentScreen}/4</span>
       </header>
 
       {error ? <div className="alert-box">{error}</div> : null}
@@ -217,7 +217,7 @@ function ImportScreen({
           <p className="muted">Export Jira au format CSV.</p>
         </div>
         <button className="secondary" type="button" onClick={onOpenHelp}>
-          Mode operatoire
+          Mode opératoire
         </button>
       </div>
 
@@ -242,8 +242,8 @@ function ImportScreen({
           }}
         />
         <span className="drop-icon">CSV</span>
-        <strong>{file ? file.name : 'Deposer le fichier ici'}</strong>
-        <small>{isAnalyzing ? 'Analyse en cours...' : 'ou selectionner un fichier'}</small>
+        <strong>{file ? file.name : 'Déposer le fichier ici'}</strong>
+        <small>{isAnalyzing ? 'Analyse en cours...' : 'ou sélectionner un fichier'}</small>
       </label>
     </div>
   );
@@ -261,7 +261,7 @@ function HelpModal({ onClose }) {
         <div className="modal-header">
           <div>
             <p className="eyebrow">Aide</p>
-            <h2 id="help-modal-title">Comment generer vos cartes Jira ?</h2>
+            <h2 id="help-modal-title">Comment générer vos cartes Jira ?</h2>
           </div>
           <button className="secondary icon-button" type="button" aria-label="Fermer" onClick={onClose}>
             X
@@ -270,41 +270,41 @@ function HelpModal({ onClose }) {
 
         <div className="help-steps">
           <section>
-            <h3>1. Preparez votre recherche dans Jira</h3>
+            <h3>1. Préparez votre recherche dans Jira</h3>
             <p>
               Ouvrez le{' '}
               <a href="https://bgpn.atlassian.net/issues/?filter=32318" target="_blank" rel="noreferrer">
-                filtre Jira propose
+                filtre Jira proposé
               </a>
-              , puis adaptez si necessaire les criteres a votre besoin : Espace, Type de ticket,
+              , puis adaptez si nécessaire les critères à votre besoin : Espace, Type de ticket,
               Composant, Sprint...
             </p>
           </section>
 
           <section>
-            <h3>2. Verifiez les colonnes</h3>
+            <h3>2. Vérifiez les colonnes</h3>
             <p>Affichez au minimum les colonnes suivantes :</p>
-            <p className="help-highlight">Cle de ticket - Resume - Story Point - Parent</p>
+            <p className="help-highlight">Clé de ticket - Résumé - Story Point - Parent</p>
           </section>
 
           <section>
             <h3>3. Exportez votre recherche</h3>
-            <p>Dans Jira, selectionnez :</p>
-            <p className="help-highlight">Exporter - CSV (colonnes par defaut)</p>
+            <p>Dans Jira, sélectionnez :</p>
+            <p className="help-highlight">Exporter mes champs par défaut</p>
             <p>Enregistrez ensuite le fichier .csv sur votre ordinateur.</p>
           </section>
 
           <section>
             <h3>4. Importez le fichier</h3>
-            <p>Dans l'application, selectionnez ou deposez votre fichier CSV dans la zone prevue a cet effet.</p>
+            <p>Dans l'application, sélectionnez ou déposez votre fichier CSV dans la zone prévue à cet effet.</p>
           </section>
 
           <section>
-            <h3>5. Generez vos cartes</h3>
-            <p>Verifiez le jeu de couleurs propose.</p>
+            <h3>5. Générez vos cartes</h3>
+            <p>Vérifiez le jeu de couleurs proposé.</p>
             <p>Les couleurs ne vous conviennent pas ? Cliquez sur Autres couleurs pour obtenir une nouvelle proposition.</p>
-            <p>Lorsque tout vous convient, cliquez sur Generer.</p>
-            <p className="help-highlight">Vos cartes Jira sont pretes !</p>
+            <p>Lorsque tout vous convient, cliquez sur Générer.</p>
+            <p className="help-highlight">Vos cartes Jira sont prêtes !</p>
           </section>
         </div>
 
@@ -346,7 +346,7 @@ function SummaryScreen({
     <div className="stack">
       <div className="section-heading">
         <div>
-          <h2>Resume</h2>
+          <h2>Résumé</h2>
           <p className="muted">{file?.name}</p>
         </div>
         <button className="secondary" type="button" onClick={onReset}>
@@ -364,7 +364,7 @@ function SummaryScreen({
             onChange={() => onSetColorMode('black_and_white')}
           />
           <strong>Noir et blanc</strong>
-          <span>Contour fin et reperes de coupe.</span>
+          <span>Contour fin et repères de coupe.</span>
         </label>
         <label className={colorMode === 'color' ? 'choice-card selected' : 'choice-card'}>
           <input
@@ -415,7 +415,7 @@ function SummaryScreen({
         >
           Autres couleurs
         </button>
-        <button type="button" onClick={onGenerate}>Generer</button>
+        <button type="button" onClick={onGenerate}>Générer</button>
       </div>
     </div>
   );
@@ -426,8 +426,8 @@ function ProgressScreen({ completedSteps }) {
     <div className="stack">
       <div className="section-heading">
         <div>
-          <h2>Generation</h2>
-          <p className="muted">Preparation de l'archive ZIP.</p>
+          <h2>Génération</h2>
+          <p className="muted">Préparation de l'archive ZIP.</p>
         </div>
       </div>
       <div className="progress-list">
@@ -447,8 +447,8 @@ function ResultScreen({ result, onReset }) {
     <div className="stack">
       <div className="section-heading">
         <div>
-          <h2>Archive prete</h2>
-          <p className="muted">Les PDF sont regroupes dans un fichier ZIP.</p>
+          <h2>Archive prête</h2>
+          <p className="muted">Les PDF sont regroupés dans un fichier ZIP.</p>
         </div>
       </div>
 
@@ -460,10 +460,10 @@ function ResultScreen({ result, onReset }) {
 
       <div className="action-row">
         <a className="button" href={result.downloadUrl} download={result.fileName}>
-          Telecharger le ZIP
+          Télécharger le ZIP
         </a>
         <button className="secondary" type="button" onClick={onReset}>
-          Nouvelle generation
+          Nouvelle génération
         </button>
       </div>
     </div>
