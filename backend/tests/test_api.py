@@ -48,7 +48,7 @@ def test_analyze_csv_returns_counts_and_detected_columns() -> None:
             "key": "FEAT-2",
             "summary": "Second feature",
             "label": "FEAT-2 - Second feature",
-            "color": "#E69F00",
+            "color": "#F0E442",
             "user_story_count": 1,
             "page_count": 1,
         },

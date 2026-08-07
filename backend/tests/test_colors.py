@@ -1,4 +1,14 @@
-from backend.colors.palette import EXTENDED_PALETTE, PALETTE, color_for_feature, colors_for_features
+from backend.colors.palette import (
+    EXTENDED_PALETTE,
+    MIN_OKLAB_DISTANCE,
+    MIN_TEXT_CONTRAST_RATIO,
+    PALETTE,
+    color_for_feature,
+    colors_for_features,
+    contrast_ratio,
+    oklab_distance,
+    readable_text_color,
+)
 
 
 def test_feature_color_is_stable() -> None:
@@ -21,10 +31,10 @@ def test_color_variant_rotates_palette() -> None:
 
 
 def test_colors_for_features_assigns_unique_colors() -> None:
-    feature_colors = colors_for_features([f"FEAT-{index}" for index in range(1, 8)])
+    feature_colors = colors_for_features([f"FEAT-{index}" for index in range(1, 10)])
 
-    assert len(feature_colors) == 7
-    assert len(set(feature_colors.values())) == 7
+    assert len(feature_colors) == 9
+    assert len(set(feature_colors.values())) == 9
 
 
 def test_colors_for_features_rotates_generation_variant() -> None:
@@ -33,6 +43,25 @@ def test_colors_for_features_rotates_generation_variant() -> None:
 
     assert base_colors["FEAT-1"] != alternate_colors["FEAT-1"]
     assert len(set(alternate_colors.values())) == 2
+
+
+def test_colors_for_features_respects_oklab_distance_threshold() -> None:
+    feature_colors = list(colors_for_features([f"FEAT-{index}" for index in range(1, 8)]).values())
+
+    distances = [
+        oklab_distance(first_color, second_color)
+        for first_index, first_color in enumerate(feature_colors)
+        for second_color in feature_colors[first_index + 1 :]
+    ]
+
+    assert min(distances) >= MIN_OKLAB_DISTANCE
+
+
+def test_palette_keeps_readable_text_on_each_color() -> None:
+    for color in EXTENDED_PALETTE:
+        text_color = readable_text_color(color)
+        assert text_color in ("#000000", "#FFFFFF")
+        assert contrast_ratio(color, text_color) >= MIN_TEXT_CONTRAST_RATIO
 
 
 def test_palette_uses_colorblind_safe_colors() -> None:
