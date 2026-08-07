@@ -9,6 +9,7 @@ class FeatureAnalysis(BaseModel):
     key: str = Field(min_length=1)
     summary: str = Field(min_length=1)
     label: str = Field(min_length=1)
+    color: str = Field(pattern=r"^#[0-9A-Fa-f]{6}$")
     user_story_count: int = Field(ge=0)
     page_count: int = Field(ge=0)
 

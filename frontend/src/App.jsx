@@ -237,6 +237,7 @@ function SummaryScreen({
         key: feature,
         summary: '',
         label: feature,
+        color: '#000000',
         user_story_count: '-',
         page_count: '-'
       }));
@@ -285,6 +286,7 @@ function SummaryScreen({
       <div className="feature-table">
         <div className="feature-table-head">
           <span>Feature ({analysis.feature_count})</span>
+          <span>Couleur</span>
           <span>US ({analysis.ticket_count})</span>
           <span>Pages ({totalPages})</span>
         </div>
@@ -294,6 +296,14 @@ function SummaryScreen({
               <strong>{feature.key}</strong>
               {feature.summary ? <span>{feature.summary}</span> : null}
             </div>
+            <span className="color-cell">
+              <span
+                aria-hidden="true"
+                className="color-swatch"
+                style={{ backgroundColor: feature.color || '#000000' }}
+              />
+              <span>{feature.color || '-'}</span>
+            </span>
             <span className="pill">{feature.user_story_count}</span>
             <span className="pill">{feature.page_count}</span>
           </div>

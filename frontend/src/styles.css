@@ -285,7 +285,7 @@ small {
 .feature-table-head,
 .feature-table-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 76px 76px;
+  grid-template-columns: minmax(0, 1fr) 132px 76px 76px;
   gap: 12px;
   align-items: center;
   padding: 14px 16px;
@@ -317,6 +317,25 @@ small {
 
 .feature-table-row > div span {
   color: var(--muted);
+}
+
+.color-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.color-swatch {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  border: 2px solid rgba(248, 250, 252, 0.78);
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.8);
 }
 
 .progress-list {

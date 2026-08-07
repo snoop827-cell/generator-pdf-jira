@@ -8,6 +8,7 @@ import pandas as pd
 from pandas.errors import EmptyDataError, ParserError
 
 from backend.api.schemas import AnalyzeResponse, FeatureAnalysis
+from backend.colors.palette import color_for_feature
 from backend.core.exceptions import CsvValidationError
 from backend.core.models import ColorMode, GenerationOptions, GenerationSummary
 from backend.csv.reader import parse_jira_dataframe
@@ -40,6 +41,7 @@ def analyze_csv_bytes(content: bytes) -> AnalyzeResponse:
                 key=print_job.feature.key,
                 summary=print_job.feature.summary,
                 label=print_job.feature.label,
+                color=color_for_feature(print_job.feature.key),
                 user_story_count=len(print_job.feature.stories),
                 page_count=print_job.page_count,
             )
