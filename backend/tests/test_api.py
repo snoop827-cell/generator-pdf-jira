@@ -83,6 +83,18 @@ def test_analyze_csv_accepts_color_variant() -> None:
     assert response.json()["feature_details"][0]["color"] == "#E69F00"
 
 
+def test_analyze_csv_assigns_unique_colors_per_generation() -> None:
+    response = client.post(
+        "/api/csv/analyze",
+        files={"file": ("jira.csv", CSV_CONTENT, "text/csv")},
+    )
+
+    colors = [feature["color"] for feature in response.json()["feature_details"]]
+
+    assert response.status_code == 200
+    assert len(colors) == len(set(colors))
+
+
 def test_generate_summary_returns_generation_counts() -> None:
     response = client.post(
         "/api/generate/summary",

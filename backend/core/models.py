@@ -11,6 +11,7 @@ class ColorMode(StrEnum):
 class GenerationOptions(BaseModel):
     color_mode: ColorMode = ColorMode.BLACK_AND_WHITE
     color_variant: int = Field(default=0, ge=0)
+    feature_colors: dict[str, str] = Field(default_factory=dict)
 
 
 class GenerationSummary(BaseModel):
