@@ -236,7 +236,7 @@ small {
   width: min(760px, 100%);
   max-height: min(86vh, 780px);
   overflow: auto;
-  border: 1px solid rgba(148, 163, 184, 0.24);
+  border: 1px solid rgba(245, 158, 11, 0.55);
   border-radius: 20px;
   background: #111827;
   box-shadow: 0 30px 90px rgba(2, 6, 23, 0.55);

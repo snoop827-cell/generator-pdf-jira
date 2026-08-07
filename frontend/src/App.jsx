@@ -290,7 +290,7 @@ function HelpModal({ onClose }) {
           <section>
             <h3>3. Exportez votre recherche</h3>
             <p>Dans Jira, sélectionnez :</p>
-            <p className="help-highlight">Exporter mes champs par défaut</p>
+            <p className="help-highlight">CSV - mes champs par défaut</p>
             <p>Enregistrez ensuite le fichier .csv sur votre ordinateur.</p>
           </section>
 
