@@ -422,6 +422,33 @@ small {
   box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.8);
 }
 
+.zip-name-field {
+  display: grid;
+  gap: 8px;
+}
+
+.zip-name-field span {
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.zip-name-field input {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  font-weight: 700;
+  padding: 12px 14px;
+}
+
+.zip-name-field input:focus {
+  border-color: rgba(245, 158, 11, 0.55);
+  outline: none;
+}
+
 .progress-list {
   display: grid;
   gap: 12px;

@@ -122,7 +122,7 @@ def test_generate_returns_zip_with_one_pdf_per_feature() -> None:
     assert response.headers["x-pdf-count"] == "2"
 
     with ZipFile(BytesIO(response.content)) as archive:
-        assert archive.namelist() == ["FEAT-1.pdf", "FEAT-2.pdf"]
+        assert archive.namelist() == ["FEAT-1_1P.pdf", "FEAT-2_1P.pdf"]
 
 
 def test_analyze_csv_rejects_empty_file() -> None:

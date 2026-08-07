@@ -16,7 +16,11 @@ def render_feature_pdfs(
     output_dir.mkdir(parents=True, exist_ok=True)
 
     pdf_paths = [
-        render_feature_pdf(print_job, output_dir / f"{_safe_filename(print_job.feature.key)}.pdf", options)
+        render_feature_pdf(
+            print_job,
+            output_dir / f"{_safe_filename(print_job.feature.key)}_{print_job.page_count}P.pdf",
+            options,
+        )
         for print_job in print_jobs
     ]
 
@@ -32,4 +36,3 @@ def render_feature_pdfs(
 
 def _safe_filename(value: str) -> str:
     return "".join(character if character.isalnum() or character in "-_" else "_" for character in value)
-

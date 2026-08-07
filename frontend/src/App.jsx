@@ -14,6 +14,7 @@ export default function App() {
   const [file, setFile] = useState(null);
   const [analysis, setAnalysis] = useState(null);
   const [colorMode, setColorMode] = useState('black_and_white');
+  const [zipName, setZipName] = useState('jira-cards');
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -99,7 +100,7 @@ export default function App() {
       const downloadUrl = URL.createObjectURL(zipBlob);
       setResult({
         downloadUrl,
-        fileName: 'jira-cards.zip',
+        fileName: `${safeZipName(zipName)}.zip`,
         cardCount: Number(response.headers.get('X-Card-Count') || 0),
         pageCount: Number(response.headers.get('X-Page-Count') || 0),
         pdfCount: Number(response.headers.get('X-Pdf-Count') || 0)
@@ -166,11 +167,14 @@ export default function App() {
               setAnalysis(null);
               setResult(null);
               setColorVariant(0);
+              setZipName('jira-cards');
             }}
             onRegenerateColors={regenerateColors}
             onSetColorMode={setColorMode}
+            onSetZipName={setZipName}
             isAnalyzing={isAnalyzing}
             isGenerating={isGenerating}
+            zipName={zipName}
           />
         ) : null}
 
@@ -187,6 +191,7 @@ export default function App() {
               setResult(null);
               setCompletedSteps([]);
               setColorVariant(0);
+              setZipName('jira-cards');
             }}
           />
         ) : null}
@@ -327,7 +332,9 @@ function SummaryScreen({
   onGenerate,
   onRegenerateColors,
   onReset,
-  onSetColorMode
+  onSetColorMode,
+  onSetZipName,
+  zipName
 }) {
   const featureDetails = Array.isArray(analysis.feature_details)
     ? analysis.feature_details
@@ -407,6 +414,16 @@ function SummaryScreen({
           </div>
         ))}
       </div>
+
+      <label className="zip-name-field">
+        <span>Nom du ZIP</span>
+        <input
+          type="text"
+          value={zipName}
+          onChange={(event) => onSetZipName(event.target.value)}
+          placeholder="jira-cards"
+        />
+      </label>
 
       <div className="action-row">
         <button
@@ -495,4 +512,15 @@ async function readError(response) {
   } catch {
     return 'Une erreur est survenue.';
   }
+}
+
+function safeZipName(value) {
+  const normalized = value
+    .trim()
+    .replace(/\.zip$/i, '')
+    .replace(/[<>:"/\\|?*\u0000-\u001F]+/g, '-')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+  return normalized || 'jira-cards';
 }

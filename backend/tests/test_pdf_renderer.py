@@ -87,7 +87,7 @@ def test_render_feature_pdfs_returns_paths_and_summary(tmp_path: Path) -> None:
     print_jobs = paginate_features([make_feature(1, "FEAT-1"), make_feature(2, "FEAT-2")])
     pdf_paths, summary = render_feature_pdfs(print_jobs, tmp_path)
 
-    assert [path.name for path in pdf_paths] == ["FEAT-1.pdf", "FEAT-2.pdf"]
+    assert [path.name for path in pdf_paths] == ["FEAT-1_1P.pdf", "FEAT-2_1P.pdf"]
     assert all(path.exists() for path in pdf_paths)
     assert summary.feature_count == 2
     assert summary.user_story_count == 3
