@@ -304,7 +304,7 @@ function HelpModal({ onClose }) {
           <section>
             <h3>3. Exportez votre recherche</h3>
             <p>Dans Jira, cliquez sur les "..." et sélectionnez l'action :</p>
-            <p className="help-highlight">CSV - mes champs par défaut</p>
+            <p className="help-highlight">Exporter -&gt; CSV - mes champs par défaut</p>
             <p>Enregistrez ensuite le fichier .csv sur votre ordinateur.</p>
             <p>
               Dans cette version V.2.0, seuls les champs cités ci-dessus sont imprimés sur les cartes.
