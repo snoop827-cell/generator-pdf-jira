@@ -176,10 +176,9 @@ def _draw_card(
     padding = CARD_PADDING
 
     canvas.saveState()
-    if card.kind == CardKind.FEATURE:
-        fill_color = colors.HexColor(border_color) if options.color_mode == ColorMode.COLOR else colors.black
-        canvas.setFillColor(fill_color)
-        canvas.setFillAlpha(0.16 if options.color_mode == ColorMode.COLOR else 0.08)
+    if card.kind == CardKind.FEATURE and options.color_mode == ColorMode.COLOR:
+        canvas.setFillColor(colors.HexColor(border_color))
+        canvas.setFillAlpha(0.16)
         canvas.rect(x, y, width, height, stroke=0, fill=1)
         canvas.setFillAlpha(1)
 
