@@ -8,6 +8,9 @@ from backend.core.exceptions import CsvValidationError
 from backend.core.models import UserStory
 from backend.csv.columns import JiraColumnMapping, detect_columns
 
+UNKNOWN_FEATURE_KEY = "TSYCPROGRM-XXXX"
+UNKNOWN_FEATURE_SUMMARY = "Feature inconnue"
+
 
 def read_jira_csv(path: str | Path) -> tuple[list[UserStory], JiraColumnMapping]:
     dataframe = pd.read_csv(path, dtype=str, keep_default_na=False)
@@ -34,31 +37,31 @@ def _clean_dataframe(dataframe: pd.DataFrame) -> pd.DataFrame:
 def _to_user_stories(dataframe: pd.DataFrame, mapping: JiraColumnMapping) -> list[UserStory]:
     stories: list[UserStory] = []
     for _, row in dataframe.iterrows():
-        if not _has_required_card_fields(row, mapping):
+        if not _has_required_ticket_fields(row, mapping):
             continue
 
         story_points = _parse_story_points(row[mapping.story_points])
+        feature_key = str(row[mapping.parent_key]).strip() or UNKNOWN_FEATURE_KEY
+        feature_summary = str(row[mapping.parent_summary]).strip() or UNKNOWN_FEATURE_SUMMARY
         stories.append(
             UserStory(
                 issue_type=str(row[mapping.issue_type]).strip(),
                 key=str(row[mapping.issue_key]).strip(),
                 summary=str(row[mapping.summary]).strip(),
                 story_points=story_points,
-                feature_key=str(row[mapping.parent_key]).strip(),
-                feature_summary=str(row[mapping.parent_summary]).strip(),
+                feature_key=feature_key,
+                feature_summary=feature_summary,
             )
         )
     return stories
 
 
-def _has_required_card_fields(row: pd.Series, mapping: JiraColumnMapping) -> bool:
+def _has_required_ticket_fields(row: pd.Series, mapping: JiraColumnMapping) -> bool:
     return all(
         str(row[column]).strip()
         for column in (
             mapping.issue_key,
             mapping.summary,
-            mapping.parent_key,
-            mapping.parent_summary,
         )
     )
 

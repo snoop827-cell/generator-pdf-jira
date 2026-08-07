@@ -62,7 +62,7 @@ def test_parse_jira_dataframe_rejects_duplicate_ticket_keys() -> None:
         parse_jira_dataframe(dataframe)
 
 
-def test_parse_jira_dataframe_skips_rows_without_parent_feature() -> None:
+def test_parse_jira_dataframe_uses_unknown_feature_when_parent_is_missing() -> None:
     dataframe = pd.DataFrame(
         [
             {
@@ -86,5 +86,8 @@ def test_parse_jira_dataframe_skips_rows_without_parent_feature() -> None:
 
     stories, _ = parse_jira_dataframe(dataframe)
 
-    assert len(stories) == 1
-    assert stories[0].key == "PROJ-1"
+    assert len(stories) == 2
+    assert stories[0].key == "FEAT-1"
+    assert stories[0].feature_key == "TSYCPROGRM-XXXX"
+    assert stories[0].feature_summary == "Feature inconnue"
+    assert stories[1].key == "PROJ-1"
